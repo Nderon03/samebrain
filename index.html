@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b0a1a"><title>Same Brain</title>
+<style>
+:root{--p:#8b5cf6;--b:#38bdf8;--y:#fbbf24;--bg:#0b0a1a;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{background:radial-gradient(circle at 15% 0,#2d1b69,transparent 55%),radial-gradient(circle at 95% 100%,#0b3a66,transparent 55%),var(--bg);color:#fff;font:600 17px/1.35 system-ui,-apple-system,sans-serif;min-height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.c{max-width:520px;margin:0 auto;padding:24px 18px;display:flex;flex-direction:column;gap:12px;min-height:100dvh;justify-content:center;animation:in .35s both}
+h1{font-size:64px;line-height:.92;font-weight:900;background:linear-gradient(90deg,var(--p),var(--b),var(--y));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px #8b5cf666)}
+h2{font-size:30px}h3{font-size:13px;opacity:.65;text-transform:uppercase;letter-spacing:.1em;margin-top:6px}
+.m{opacity:.7}button{font:inherit;color:#fff;cursor:pointer}
+.b{padding:18px;border:0;border-radius:18px;font-weight:800;font-size:18px;background:linear-gradient(135deg,var(--p),#6366f1);box-shadow:0 6px 24px #8b5cf655;transition:transform .1s}
+.b:active{transform:scale(.97)}.b.g{background:#ffffff14;box-shadow:none}.b.y{background:linear-gradient(135deg,var(--y),#f97316);color:#1a1033;box-shadow:0 6px 24px #fbbf2444}
+.ch.sel{outline:3px solid var(--y);background:#fbbf2426}
+input{width:100%;padding:16px;border-radius:14px;border:2px solid #ffffff22;background:#ffffff0d;color:#fff;font:inherit;font-size:18px}
+input:focus{outline:0;border-color:var(--b);box-shadow:0 0 0 4px #38bdf833}
+.card{background:#ffffff0f;border:1px solid #ffffff1c;border-radius:22px;padding:16px;box-shadow:0 8px 30px #0006}
+.q{font-size:26px;font-weight:800;line-height:1.2}
+.row{display:flex;gap:8px;align-items:center}.i{width:52px;height:52px;flex:none;border:0;border-radius:14px;background:#ffffff14;font-size:18px}
+.seg{display:flex;gap:8px}.seg button{flex:1;padding:12px 6px;border:2px solid #ffffff22;border-radius:14px;background:0;font-size:15px}.seg .on{border-color:var(--y);background:#fbbf2422}
+.tag{display:inline-block;padding:4px 12px;border-radius:99px;background:var(--y);color:#1a1033;font-size:13px;font-weight:900}
+.bar{height:10px;border-radius:9px;background:linear-gradient(90deg,var(--p),var(--b));margin:8px 0;box-shadow:0 0 12px #38bdf866}
+.grp{animation:pop .5s both}.big{font-size:30px;font-weight:900;text-align:center;color:var(--y);animation:pop .6s both;text-shadow:0 0 30px #fbbf24}
+.bs{position:fixed;top:-30px;font-style:normal;font-size:26px;animation:fall 2.4s linear both;pointer-events:none}
+.sm{font-size:14px}.lb{display:flex;justify-content:space-between;align-items:center}
+#t{position:fixed;bottom:30px;left:50%;transform:translate(-50%,40px);background:#fff;color:#111;padding:12px 20px;border-radius:99px;opacity:0;transition:.3s;font-weight:800;z-index:9}#t.show{opacity:1;transform:translate(-50%,0)}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}@keyframes pop{from{opacity:0;transform:scale(.8)}}@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.seg{flex-wrap:wrap}.seg button{min-width:30%}#hd{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;padding:calc(env(safe-area-inset-top) + 10px) 12px 6px;z-index:10;pointer-events:none}#hd button{pointer-events:auto;background:#ffffff1a;border:0;border-radius:99px;padding:8px 14px;font-size:15px;backdrop-filter:blur(6px)}#hd i{flex:1}.c{padding-top:64px}#ov{position:fixed;inset:0;background:#0b0a1af2;backdrop-filter:blur(8px);z-index:20;overflow:auto}@keyframes cd{from{opacity:0;transform:scale(1.7)}to{opacity:1;transform:scale(1)}}.sfx{position:relative;width:120px;height:120px;margin:4px auto 8px}.sfx i{position:absolute;top:0;width:60px;height:120px}.sfx i:first-child{left:0;border-radius:120px 0 0 120px;background:linear-gradient(135deg,var(--p),var(--b));animation:sl 1.3s cubic-bezier(.2,.9,.3,1.15) both}.sfx i:last-child{right:0;border-radius:0 120px 120px 0;background:linear-gradient(135deg,var(--y),#f97316);animation:sr 1.3s cubic-bezier(.2,.9,.3,1.15) both}.sfx:after{content:'';position:absolute;inset:0;border-radius:50%;animation:ring 1.2s 1s ease-out both}
+@keyframes sl{from{transform:translateX(-150px) rotate(-60deg);opacity:0}}@keyframes sr{from{transform:translateX(150px) rotate(60deg);opacity:0}}@keyframes ring{from{box-shadow:0 0 0 0 #fbbf24dd}to{box-shadow:0 0 0 70px #fbbf2400}}.sp{box-shadow:inset 0 0 90px -35px var(--ac)}.sp .tag{background:var(--ac);color:#12081f}</style></head><body><div id="app"></div><div id="t"></div><div id="hd"><button id="hm" onclick="leave()">⌂ Home</button><i></i><button onclick="rules()">❓</button><button id="sd" onclick="tog()">🔊</button></div>
+<script>
+const mk=(s,pk,pre='')=>s.split('\n').map(x=>{const[t,...ch]=x.split('|');return{t:pre+t,ch:pk?[]:ch,pick:pk}});
+const LK='Who is most likely to… ';
+const BANK={mc:mk(`Best takeaway after midnight?|Kebab|Pizza|Chinese|McDonald's
+Pineapple on pizza?|Yes please|Crime against food
+Cereal: milk first or last?|First|Last
+Toilet roll goes…|Over|Under
+Ketchup lives in the…|Fridge|Cupboard
+Tea: milk before or after the water?|Before|After
+Cheese or chocolate for life?|Cheese|Chocolate
+Breakfast for dinner?|Love it|Disgusting
+Best pizza base?|Thin|Deep pan|Stuffed crust
+Best chips?|Chunky chips|Skinny fries|Wedges
+Best hot drink?|Tea|Coffee|Hot chocolate
+Most overrated food?|Sushi|Avocado toast|Steak|Truffle anything
+Best pizza?|Margherita|Pepperoni|Hawaiian|Meat feast
+Best cinema snack?|Popcorn|Pick n mix|Nachos
+Hangover cure?|Fry-up|Sleep|Hair of the dog|Water
+Biggest ick?|Loud chewing|Bad texting|Rude to waiters|Always on their phone
+Best first date?|Dinner|Drinks|Activity|Long walk
+Texting after a date?|Same day|Next day|Wait three days
+Share your location with your partner?|Always|Never
+Check your partner's phone?|Never|Only if suspicious|Yes, openly
+Splitting the bill?|50/50|Whoever asked pays|Pay for what you ordered
+Biggest red flag?|Rude to staff|Never apologises|Hates your friends|Still close with ex
+Best age to settle down?|Under 25|25–30|30+|Never
+Dream wedding?|Huge party|Small and cosy|Elope|No marriage
+Ghosting is…|Never okay|Sometimes fine
+Working life?|Work from home forever|Office please|Hybrid
+Hustle or chill?|Grind now|Enjoy life now
+Does money buy happiness?|Yes|No
+Take…|£1 million now|£50k a year for life
+Best use of £1m?|Property|Invest it|Epic party|Give half away
+Rent or buy?|Buy|Rent forever|Vanlife
+Tipping?|Always|Only for great service|Never
+You are…|Early bird|Night owl
+Alarm goes off…|Snooze|Straight up
+Shower time?|Morning|Night
+Holiday?|Beach|City break|Hiking|All-inclusive
+Best superpower?|Flight|Invisibility|Time travel|Mind reading
+Famous or rich and unknown?|Famous|Rich and unknown
+Know when or how you die?|When|How|Neither
+Live forever?|Yes|No thanks
+Live in the…|Past|Future
+Delete all social media forever?|Easy|Never
+Best decade?|80s|90s|2000s|Now
+Streaming service for life?|Netflix|YouTube|TikTok|Disney+
+Best film genre?|Horror|Comedy|Action|Romance
+Superhero team?|Marvel|DC|Neither
+Better band?|Oasis|Blur
+Film or book?|Film is better|Book is better
+Best season?|Summer|Winter|Autumn|Spring
+Cats or dogs?|Cats|Dogs|Neither
+Communication?|Text|Call|Voice notes
+Voice notes?|Love them|Hate them
+Left on read?|Rude|Totally normal
+Group chat?|Muted|Notifications on
+Getting around?|Drive|Public transport
+Flight seat?|Aisle|Window
+Reclining your seat?|Recline|Don't be rude
+Arriving at a party?|Early|On time|Fashionably late
+Karaoke?|Sing loud|Never
+Party position?|Dance floor|Edge of the room|By the bar
+Lie to spare feelings?|White lies are fine|Always be honest
+Friend's partner is cheating?|Tell them|Stay out of it
+Social battery?|Party animal|Homebody
+Birthday?|Big party|Quiet dinner|Ignore it
+Gifts?|Love giving|Love receiving
+Buying drinks?|Rounds|Buy your own|Whoever's richest
+Photos?|Selfie king|Never in photos
+Gym?|Early morning|After work|Never`),
+lk:mk(`be late to their own wedding?
+become a millionaire?
+join a cult?
+survive a zombie apocalypse?
+get arrested abroad?
+cry at a film?
+text their ex?
+win a reality show?
+go viral for the wrong reason?
+forget a birthday?
+adopt ten cats?
+fall asleep at a party?
+lie to get out of plans?
+get lost even with GPS?
+start a business that fails?
+become famous?
+eat the last slice without asking?
+ghost someone?
+have a secret second life?
+end up on the news?
+say something awkward at a wedding?
+run a marathon on a dare?
+move abroad suddenly?
+get banned from a pub?
+overshare with a stranger?
+break something at a party?
+be first to snitch?
+have the most chaotic search history?
+lose their phone this week?
+win an argument they're wrong about?
+accidentally start a fight?
+be the group therapist?
+cheat at a board game?
+become a politician?
+plan the best revenge?
+be a terrible flatmate?
+say "I'm fine" when they're not?`,1,LK),
+sx:mk(`Best friend's partner cheated. You…|Tell them now|Stay out of it|Confront the cheater first
+You find £5,000 cash with no owner. You…|Hand it in|Keep it|Split it with a mate
+£1 million to never see your family again?|Take it|Refuse
+Would you cheat if you'd never be caught?|Yes|No|Depends who
+Read your partner's messages if suspicious?|Yes|No
+Lie on your CV for your dream job?|Yes|Never|Small fibs only
+Report a friend for a serious crime?|Yes|No|Depends on the crime
+Push one person to save five?|Push|Don't
+Kill a stranger for £10m with zero consequences?|Yes|No
+Which is worse?|Cheating with a friend|Cheating with a stranger|An emotional affair
+Biggest dealbreaker?|Cheating|Lying|Being boring|Bad with money
+Sleep with your boss for a promotion?|Never|Maybe|Only if mutual
+Date your best friend's ex?|Never|Ask first|Why not
+One-night stand on holiday?|Absolutely|No thanks
+Open relationship?|Yes|No|Maybe
+Take credit for a coworker's idea?|Never|If it gets me promoted
+Waiter undercharges you. You…|Say something|Keep quiet
+Who do you save first?|A child|A doctor|Your best friend|Yourself
+Marry a billionaire you don't love?|Yes|No|Love and money
+Take back a cheater who begs?|Never|Once|Always
+Steal from a huge corporation?|Fine|Never
+Ruin a stranger's day for £500?|Yes|No
+Partner who is…|Brutally honest|Sweetly dishonest
+Check your teen's phone?|Yes|No
+Date a coworker?|Yes|Never
+Lie to a dying friend to comfort them?|Yes|No
+Spy on your friends for £1m?|Yes|No
+Is it okay to pull a sickie for a holiday?|Yes|No
+Tell your boss about a friend's side hustle?|Yes|No`),
+sl:mk(`cheat on a partner?
+have a one-night stand this year?
+drunk text their ex?
+lie on their CV?
+have the most red flags?
+take a bribe?
+sleep with a coworker?
+get caught in a lie?
+end up in a throuple?
+marry for money?
+flirt their way out of a fine?
+snitch on a friend?
+have a secret ex nobody knows about?
+swipe on dating apps while in a relationship?
+have the dirtiest search history?
+sleep with a friend's ex?
+go home with a stranger?
+be a bad influence?
+get cancelled on social media?
+betray the group for money?
+steal something on a dare?
+have the most chaotic exes?
+fake being happy in a relationship?
+pull a sickie to go on holiday?
+sell out their best friend for £1m?
+blackmail someone?
+have a hidden dark side?
+get away with a crime?`,1,LK)};
+const NM='Sparky Biscuit Noodle Pickle Waffle Mango Ziggy Turbo Pixel Cosmo Banjo Gizmo Nacho Pretzel Rocket Muffin'.split(' ');
+const INFO={normal:['','Match the majority: 2 pts each'],finger:['👉 Point the Finger','Vote for a player. Majority voters get 2 pts, and whoever gets the most votes takes the spotlight: +2 pts'],hot:['🪑 Hot Seat','A random player sits in the hot seat. They first guess who the group will pick most (+3 if right), then everyone votes. Majority = 2 pts'],verdict:['⚖️ Group Verdict','More than half the group on one answer reaches a verdict: 3 pts each. Otherwise it is a hung jury: 1 pt for the biggest group(s)'],sync:['🧠 Perfect Sync','Only scores if EVERYONE gives the same answer: 5 pts each'],minority:['🦄 Minority Report','Be in the smallest group: 3 pts. Majority scores nothing'],predict:['🧠 Mind Meld','First secretly guess the most popular answer (+3 if right), then give your own. Majority = 2 pts'],double:['✨ DOUBLE POINTS','Every point you earn this round is worth twice as much, bonuses included'],freeze:['🥶 Brain Freeze','10 seconds to answer! Majority = 2 pts'],instant:['⚡ No Thinking Allowed','5 seconds and your answer locks instantly. Majority = 2 pts']};
+const TM={freeze:10,instant:5};
+const SPT='Majority voters get 2 pts (perfect split: 1 each). The writer earns 2 pts for every vote on the smaller side, so a closer split and a bigger group are worth more.';
+const AL={maccies:'mcdonalds',maccys:'mcdonalds','maccy ds':'mcdonalds','maccy d':'mcdonalds',macdonalds:'mcdonalds',mcdonald:'mcdonalds',mcds:'mcdonalds','kentucky fried chicken':'kfc','fish n chips':'fish and chips',chippy:'chips',doner:'kebab','doner kebab':'kebab',choccy:'chocolate','mac n cheese':'mac and cheese',telly:'tv',television:'tv',insta:'instagram',ig:'instagram',fb:'facebook',tiktok:'tik tok'};
+let atHome=0;const $=s=>document.querySelector(s),app=$('#app'),R=h=>{app.innerHTML=h;$('#hm').style.visibility=atHome?'hidden':'visible';atHome=0;const i=$('#in');i&&i.focus()};
+const E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const T=m=>{const t=$('#t');t.textContent=m;t.className='show';setTimeout(()=>t.className='',2200)};
+let S={sound:1,sx:0,lv:1,rounds:10,mode:'classic',sp:1,names:['','','',''],seen:0},st={},used=new Set(),ac;
+try{Object.assign(S,JSON.parse(localStorage.samebrain))}catch(e){}if(!['classic','likely','split','know'].includes(S.mode))S.mode='classic';
+const sv=()=>{try{localStorage.samebrain=JSON.stringify(S)}catch(e){}};
+function snd(f,d=.12,t='sine'){if(!S.sound)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
+const jingle=a=>a.forEach((f,i)=>setTimeout(()=>snd(f,.18,'triangle'),i*110));
+
+const WR=[['dbl','Double Trouble','✖️2','Your round points ×2',12],['bb','Bonus Brain','🧠','+3 points',18],['gs','Golden Sync','✨','+3 if you score this round',10],['sv','Streak Saver','🛡️','Streak survives a miss (or +1 pt)',10],['mr','Mind Reader','🔮','+3 for a correct prediction (else +2)',10],['l7','Lucky Seven','7️⃣','+7 points',3],['cb','Comeback Boost','🚀','+4 if behind the leader (else +2)',12],['ss','Streak Starter','🔥','+2 if you match the majority',10],['tt','Triple Threat','✖️3','Your round points ×3',2],['ps','Sync Protection','🤝','+5 if Perfect Sync (else +2)',5],['gr','Gold Rush','🪙','+5 points',6]];
+BANK.mc.push(...mk(`You get £10,000 but must give up one thing for a year. What goes?|Social media|Takeaways|Gaming|Going out
+Worst betrayal?|A friend lies to protect themselves|Partner hides something big|Someone shares your secret|Friend picks their partner over you
+Guarantee one thing for life?|Unlimited money|Perfect health|True love|Unlimited free time
+Most important thing in a friendship?|Loyalty|Honesty|Reliability|Fun together
+Free Saturday. Best plan?|Big night out|Gaming or film marathon|Explore somewhere new|Chill with friends
+World-class at one skill instantly?|Making money|Reading people|Sport|Learning anything
+Most overrated part of modern life?|Social media|Designer clothes|Expensive holidays|Being busy
+Your group wins £20k. What happens?|Split equally|Extra for the organiser|Vote on it|Negotiate shares
+Who pays on a group trip?|Split everything|Everyone pays their own|Take turns treating
+Your friend's plan is bad. You…|Say so|Go along|Quietly fix it
+Best group trip?|Beach|City|Festival|Road trip
+Worst flatmate habit?|Dirty dishes|Loud guests|Never buys loo roll|Heating wars
+Biggest waste of time?|Doomscrolling|Commuting|Small talk|Meetings
+Which subscription do you cancel?|Netflix|Spotify|Prime|Gym
+Unforgivable at a party?|Leaving without saying bye|Hogging the aux|Eating all the food|Starting a fight
+Phone on 1%. Save…|Photos|Messages|Music|Maps
+Stuck on an island with…|A chef|A doctor|A comedian|An engineer
+More annoying?|Spoilers|Slow walkers|Loud eaters|Late replies
+Pick one food forever|Pizza|Burgers|Pasta|Curry
+Better holiday?|Plan everything|Wing it|Plan half
+Biggest flex?|Fit body|Fat bank account|Huge friend group|Great career
+Your best friend gets famous. You…|Cheer loudly|Ask for favours|Keep your distance
+A mate asks to borrow £50. You…|Give it|Lend with a deadline|Say no
+Worst restaurant moment?|Slow service|Loud kids|Tiny portions|Rude staff
+Zombie plan?|Fight|Hide|Run|Join them
+Group chat is dead. You…|Post a meme|Plan something|Leave it dead
+Best game night player?|Strategist|Bluffer|Lucky winner|Loud loser
+Who gets the last slice?|Whoever's hungriest|Whoever paid|Rock paper scissors|Nobody, cut it up`));
+const SPX=[mk(`Friend owes you £100 and posts an expensive night out. You…|Demand it back|Public reminder|Say nothing, remember forever|Lend them more
+Someone always disappears when the bill arrives. You…|Call them out|Split it, remember it|Stop inviting them|Make them pay next time
+Friend says "five minutes away" again. You…|Leave without them|Roast them in the chat|Pretend to believe it|Charge late fees
+Worst group trip habit?|Never pays on time|Always late|Complains constantly|Vanishes with a crush
+Group chat goes quiet after you post. You…|Double text|Assume they're mad|Move on|Screenshot it
+Friend always cancels last minute. You…|Cancel back|Call it out|Stop making plans|Forgive instantly`),
+mk(`Partner secretly messages their ex. What bothers you most?|The secrecy|That they talk at all|Lies when asked|Nothing if honest
+Friend dates someone you were recently talking to. You…|Confront them|Let them get on with it|Demand the full story|Act unbothered forever
+Best friend has been talking behind your back. You…|Confront directly|Say you know, watch them panic|Distance yourself|Find out what they said first
+What's worse in a relationship?|Messaging an ex|Deleting messages|Lying about who they're with|Keeping a dating app
+Friend's ex slides into your DMs. You…|Tell your friend|Ignore it|Reply for the drama|Screenshot it
+Ex posts a happy couple photo. You…|Like it|Say nothing|Post back|Block them`),
+mk(`You fancy your friend's partner. You…|Take it to the grave|Tell the friend|Tell the partner|Distance yourself
+Friend is cheating on a partner you also know. You…|Tell the partner|Make the cheater confess|Stay out|Cut them off
+Worse betrayal?|Cheating with a friend|Cheating with an ex|Months of cheating|Cheating once, then lying
+Partner wants to check your phone. You…|Hand it over|Refuse|Demand theirs too|Delete things first
+Friend confesses cheating and begs you to stay quiet. You…|Keep quiet|Tell their partner|Give them a deadline|Cut contact
+Your ex is dating your friend. You…|Congratulate them|Cut off both|Pretend it's fine|Plan revenge`)];
+const SPL=[mk(`be late and blame traffic?
+say "five minutes away" while still at home?
+owe three different friends money?
+have the most embarrassing phone gallery?
+leave the group chat in a huff and rejoin later?
+pretend to be busy to avoid plans?
+act rich but be the brokest?
+get caught stalking someone's Instagram?
+disappear when the bill arrives?
+send a text to the wrong person?
+say "I don't care" then talk about it for hours?
+have the most unread messages?
+screenshot the group chat as evidence?
+start drama then act innocent?
+cancel plans last minute?`,1,LK),
+mk(`secretly still talk to their ex?
+act single when their partner isn't around?
+borrow money and conveniently forget?
+flirt for free drinks?
+be the problem in every relationship?
+have a situationship longer than a relationship?
+get back with their ex after calling them toxic?
+be secretly jealous of their best friend?
+talk badly about someone then act like their best friend?
+go through a partner's phone then get angry if touched?
+have a different personality around someone they fancy?
+entertain someone they don't like for the attention?
+leave friends stranded to impress a crush?
+ask for advice and do the opposite?
+get exposed by their own screenshots?`,1,LK),
+mk(`have a roster of people at the same time?
+have a secret relationship nobody knows about?
+steal a friend's romantic interest and pretend nothing happened?
+be chatting to someone in this room and deny it?
+expose everyone's secrets during an argument?
+be the reason this friendship group falls apart?
+act loyal in public but move differently in private?
+get caught lying and convince everyone they're the victim?
+have a secret account nobody knows about?
+fancy someone in this room?
+have the most chaotic dating history?
+betray the group for a crush?
+cheat and blame the other person?
+get back with an ex and hide it from everyone?
+already be talking to a friend's ex?`,1,LK)];
+BANK.mc.push(...mk(`Best sport to watch live?|Football|Basketball|Boxing|Tennis
+Most overrated sport?|Golf|Cricket|Formula 1|Rugby
+Worst thing a teammate can do?|Hog the ball|Blame others|Skip training|Trash talk
+Best underdog moment?|Last-minute winner|Penalty shootout|Giant killing|Comeback from 3-0
+Which tech could you live without?|Smartwatch|Laptop|TV|Headphones
+Biggest phone sin?|Phone at dinner|Speaker on trains|Texting while walking|Never charged
+Best use of AI?|Homework|Cooking ideas|Writing emails|Planning trips
+Scariest app to open?|Bank app|Work email|Screen time|Dating app
+Which would you ban?|Autoplay videos|Group voice notes|Read receipts|Ads
+Dream job perk?|Four-day week|Huge salary|Work from anywhere|Free everything
+Worst boss?|Micromanager|Ghost|Credit stealer|Loud ranter
+Most annoying work phrase?|"Per my last email"|"Quick question"|"Let's circle back"|"Touch base"
+Best way to get promoted?|Hard work|Networking|Taking credit|Being liked
+You quit on the spot if…|Pay cut|Toxic boss|Forced into the office|Pointless meetings
+Best holiday vibe?|Luxury resort|Backpacking|Road trip|Staycation
+Worst travel moment?|Lost luggage|Missed flight|Bad hotel|Food poisoning
+Which country first?|Japan|Italy|USA|Australia
+Packing style?|Overpacker|Minimalist|Last-minute|Carry-on only
+Best holiday souvenir?|Fridge magnet|Local food|Photos only|Nothing
+Best music era?|Early 2000s|90s|2010s|70s and 80s
+Which song do you skip at a party?|Mr Brightside|Wonderwall|Sweet Caroline|Mamma Mia
+Concert worth £300?|Taylor Swift|Beyoncé|Coldplay|Oasis
+Film night pick?|Rom-com|Horror|Comedy|Action
+Worst cinema habit?|Talking|Phone out|Spoiling|Loud eating
+Best gaming genre?|Shooter|Sports|Adventure|Party games
+Worst gaming sin?|Rage quitting|Camping|Smurfing|Backseat gaming
+Best friend quality?|Honest|Funny|Generous|Always there
+Worst friend habit?|Cancels plans|Flaky replies|Always borrowing|Hijacks the convo
+Your friend is rude to a waiter. You…|Say something|Apologise to the waiter|Ignore it|Never go out with them again
+Best way to make up after a fight?|Say sorry first|Food|Time|Pretend nothing happened
+How long before a reply is rude?|An hour|A day|Three days|Never rude
+Great host?|Great food|Great music|Great games|Great drinks
+Worst way to wake up?|Loud alarm|Someone shouting|Phone call|Bright lights
+Breakfast is…|Best meal|Overrated|Should be all day|Skippable
+Worst food texture?|Slimy|Mushy|Gritty|Chewy
+Best Sunday?|Lie-in then pub|Sports|Roast and sleep|Active day out
+Weirdest thing to be good at?|Impressions|Parallel parking|Remembering birthdays|Karaoke
+Best apology?|Gift|Handwritten note|Face to face|Text
+If you were a ghost you'd…|Haunt your ex|Prank friends|Watch people|Move on
+Pick your fate?|Always lose socks|Always stub toes|Constant hiccups|Slow Wi-Fi forever
+Most valuable in a crisis?|Cash|Friends|Phone|Food
+Peak age?|20s|30s|40s|Right now
+Best social media app?|Instagram|TikTok|YouTube|X
+Worst post?|Humblebrag|Cryptic vague post|Gym selfie|Relationship drama
+Best habit to build?|Early sleep|Exercise|Reading|Saving money
+You'd rather work for…|A startup|A big company|Yourself|A charity
+Best car feature?|Heated seats|Sunroof|Great sound|Self-driving`));
+SPL[0].push(...mk(`ask "where are you?" six times?
+always be the last one ready?
+reply "haha" to a long paragraph?
+forget a birthday and blame their calendar?
+fall asleep first on a night out?
+get lost on the way home?
+send voice notes over three minutes long?
+order for the table without asking?
+take twelve photos and post none?
+have the most unread notifications?`,1,LK));
+SPL[1].push(...mk(`text back instantly to a crush but leave friends on read?
+lurk on their ex's profile every week?
+flirt with someone's partner "as a joke"?
+stay friends with an ex for the wrong reasons?
+fall for the unavailable one every time?
+turn every conversation into a story about themselves?
+share secrets "in confidence" that then spread?
+say "I'm over it" while clearly not?
+have a type that always ends badly?
+cry at a wedding then roll their eyes at their own relationship?`,1,LK));
+SPL[2].push(...mk(`fall for a friend's sibling?
+ruin a wedding by accident?
+lie about their body count?
+escape a date through the toilet window?
+have a crush on a colleague's partner?
+start a rumour about two friends?
+send a risky text and regret it instantly?
+get with someone at a friend's party they shouldn't?
+delete evidence from their phone?
+privately rank everyone in the group?`,1,LK));
+SPX[0].push(...mk(`Friend is online but takes hours to reply. You…|Wait|Message again|Call|Assume they're mad
+A friend brings an uninvited plus-one. You…|Welcome them|Complain later|Ask them to leave|Charge extra
+Best friend tells your secret "by accident". You…|Forgive|Stop sharing|Retaliate|Pretend you didn't know
+Group dinner: someone orders the priciest dish and wants to split. You…|Speak up|Pay quietly|Order dessert too|Never go again
+Friend reschedules a fourth time. You…|Reschedule again|Cancel completely|Be honest|Make them organise`));
+SPX[1].push(...mk(`Friend says "no offence" before something offensive. You…|Let it slide|Clap back|Walk away|Tell the group
+Partner follows their ex's new partner. You…|Ignore it|Ask why|Follow their ex too|Unfollow everyone
+Friend flirts with your partner "as a joke". You…|Laugh it off|Say something|Make your partner say something|End the friendship
+You see your friend's date on a dating app. You…|Tell them|Keep quiet|Watch what happens|Screenshot it
+Friend always has a crisis when you have good news. You…|Support anyway|Pull away|Call it out|Stop sharing`));
+SPX[2].push(...mk(`Friend cheated and lied to you about it. You…|Forgive|Cut them off|Tell everyone|Pretend you don't know
+You kissed someone in a relationship and nobody knows. You…|Confess|Never mention it|Tell the other person|Avoid both
+Your partner's best friend fancies you. You…|Tell your partner|Avoid them|Confront them|Use it
+Friend steals your idea and gets praised. You…|Call it out publicly|Confront privately|Reveal it later|Do the same back
+Your ex is telling everyone about you. You…|Confront|Ignore|Spread things back|Block everyone`));
+BANK.kn=mk(`Go-to takeaway?|Pizza|Chinese|Curry|Kebab
+Morning person or night owl?|Morning|Night|Neither
+Spending style?|Saver|Splurger|Bargain hunter|Impulse buyer
+At a party they're…|On the dance floor|By the snacks|Deep in conversation|Gone by 11
+Biggest guilty pleasure?|Reality TV|Fast food|Scrolling for hours|Cheesy music
+Best holiday?|Beach|City break|Adventure|Staycation
+Comfort watch?|Sitcom|Reality show|Film trilogy|True crime
+First buy with £10k?|Holiday|Savings|Tech|Wardrobe
+Handling conflict?|Confront it|Avoid it|Sulk|Joke it off
+Biggest red flag in themselves?|Always late|Phone addict|Flaky|Dramatic
+Dream superpower?|Flight|Invisibility|Time travel|Mind reading
+Which would they quit?|Social media|Alcohol|Takeaways|The gym
+Text style?|Instant replies|Slow burner|Voice notes|Memes only
+In a zombie film they're…|The hero|First to go|The traitor|The one who hides
+Secret dream job?|Pro gamer|Chef|Influencer|Detective
+Most used app?|Instagram|TikTok|YouTube|WhatsApp
+The ick they feel strongest?|Loud chewing|Rude to staff|Bad hygiene|Being fake
+Dream night in?|Takeaway and film|Gaming|Cooking|Early night
+Usual drink?|Beer|Wine|Cocktails|Soft drinks
+Love language?|Words|Gifts|Quality time|Touch
+Worst habit?|Interrupting|Overthinking|Procrastinating|Overspending
+They'd rather be…|Famous|Rich|Respected|Loved
+Pet they'd have?|Dog|Cat|Something exotic|None
+Go-to dance move?|Robot|Shuffle|Slow sway|Full chaos
+Biggest fear?|Heights|Spiders|Being alone|Public speaking
+On a road trip they're…|Driver|DJ|Navigator|Snack manager
+Perfect weekend?|Adventure|Lie-in|Big night out|Catching up on life
+Who do they call in a crisis?|Parent|Best friend|Partner|Nobody
+Hidden talent?|Singing|Cooking|Impressions|Drawing`);
+const SPLQ=`Pineapple on pizza?|Yes|No
+Is a hot dog a sandwich?|Yes|No
+Toilet roll goes…|Over|Under
+Reply to texts…|Instantly|After a while
+Cereal: milk first or last?|First|Last
+Re-gifting is…|Fine|Never OK
+Leave a party…|Early|Last one out
+Tipping 20% is…|Fair|Too much
+Ghosting is…|Sometimes fine|Never OK
+Flight seat?|Window|Aisle
+Better pet?|Dog|Cat
+Read your partner's texts?|Yes|No
+Split the bill…|Evenly|By what you ate
+Are you a morning person?|Yes|No
+Recline your plane seat?|Yes|Never
+Best trip?|Beach|City
+A week without your phone?|Easy|No chance
+The last slice…|Take it|Ask first
+Films with subtitles?|Always|Never
+Surprise party for you?|Love it|Hate it
+Is water wet?|Yes|No
+Early arrival or fashionably late?|Early|Late
+Cold pizza?|Delicious|Disgusting`.split('\n').map(x=>x.split('|'));
+const AC={sync:'#38bdf8',minority:'#a78bfa',predict:'#8b5cf6',double:'#fbbf24',freeze:'#67e8f9',instant:'#f97316',finger:'#f43f5e',hot:'#ef4444',verdict:'#22c55e'};
+BANK.lk.push(...mk(`get hopelessly lost on holiday?
+fall in love on a two-week trip?
+spend a month's rent on trainers?
+cry during a work presentation?
+talk their way into a free upgrade?
+befriend the taxi driver?
+fall asleep in the cinema?
+be the first to leave the party?
+adopt a stray animal on holiday?
+start a podcast nobody listens to?
+quit their job dramatically?
+become a gym obsessive for two weeks?
+forget their keys, again?
+win a pub quiz single-handedly?
+get recognised by a stranger?
+hold a grudge for ten years?
+be on first-name terms with the bar staff?
+say "I'm outside" and not be?
+make friends with everyone at a wedding?
+own a gadget they never use?
+buy something at 2 a.m. they don't need?
+panic-clean before guests arrive?
+say yes to every invite?
+embarrass themselves in front of a crush?
+become a surprise millionaire?`,1,LK));
+SPX[0].push(...mk(`Friend posts a photo of you looking awful. You…|Demand it down|Post one back|Pretend not to see|Laugh and leave it
+Friend double-texts about the same crush for weeks. You…|Listen forever|Give blunt advice|Introduce someone new|Mute them`));
+SPX[1].push(...mk(`Your date orders the cheapest thing and eyes yours. You…|Share|Order more|Comment on it|Never see them again
+A friend only calls when they're single. You…|Pick up|Make them wait|Call it out|Pull away`));
+SPX[2].push(...mk(`Your friend's partner flirts with you at a party. You…|Shut it down|Tell your friend|Flirt back|Leave
+You find a group chat about you. You…|Read everything|Confront them|Leave quietly|Reply as if nothing's wrong`));
+function ssg(){st.su=st.su||[];let k;do{k=Math.floor(Math.random()*SPLQ.length)}while(st.su.includes(k)&&st.su.length<SPLQ.length);st.su.push(k);const q=SPLQ[k];$('#sp1').value=q[0];$('#sa').value=q[1];$('#sb').value=q[2]}
+function wh(){const P=st.P[st.r.t];if(P.wu||st.sp)return T('Wheel already used');if(st.sd&&!st.td.includes(st.r.t))return T('Spectators cannot use the wheel in sudden death');ov(`<div class=c style="text-align:center"><h2>🎡 Mystery Wheel</h2><p class=m>${E(P.n)}, spin once per game for a bonus that only helps you. Use it now, or save it for a bigger round.</p><button class="b y" onclick=spin()>Spin it (one use)</button><button class="b g" onclick=cl()>Not now</button></div>`)}
+function spin(){const P=st.P[st.r.t];if(P.wu||st.sp)return;st.sp=1;P.wu=1;const W0=WR.reduce((a,w)=>a+w[4],0);let x=Math.random()*W0,i=0;for(;i<WR.length-1&&(x-=WR[i][4])>=0;i++);const W=WR[i],cols=['#8b5cf6','#38bdf8','#fbbf24'];let c=0;const seg=WR.map(w=>{const z=w[4]/W0*360,o={s:c,z};c+=z;return o});
+(st.r.wh=st.r.wh||{})[st.r.t]=W[0];
+ov(`<div class=c style="text-align:center;align-items:center"><h2>${E(P.n)}'s spin</h2><div style="position:relative;width:280px;height:280px;margin:14px 0"><div style="position:absolute;left:50%;top:-18px;transform:translateX(-50%);font-size:28px;z-index:2">🔻</div><div id=wl style="width:100%;height:100%;border-radius:50%;background:conic-gradient(${seg.map((g,j)=>`${cols[j%3]} ${g.s}deg ${g.s+g.z}deg`).join(',')});border:4px solid #fff;box-shadow:0 0 30px #8b5cf688;position:relative;transition:transform 3.6s cubic-bezier(.12,.7,.1,1)">${seg.map((g,j)=>g.z<14?'':`<span style="position:absolute;left:50%;top:50%;font-size:22px;transform:translate(-50%,-50%) rotate(${g.s+g.z/2}deg) translateY(-105px)">${WR[j][2]}</span>`).join('')}</div></div><div id=wr style="min-height:150px"></div></div>`);
+const land=seg[i].s+seg[i].z*(.3+Math.random()*.4);
+setTimeout(()=>{const e=$('#wl');e&&(e.style.transform=`rotate(${360*5-land}deg)`)},60);
+setTimeout(()=>{st.sp=0;const e=$('#wr');if(!e)return;e.innerHTML=`<div class="big">${W[2]} ${W[1]}</div><p class=m>${W[3]}</p><p class="m sm">Applied automatically when this round is revealed.</p><button class="b y" onclick="cl();const b=$('#wb');b&&(b.textContent='✓ Wheel Used')">Continue</button>`;jingle([523,659,784,1047])},3900)}
+function reveal(){R(`<div class=c style="text-align:center"><h1 style="font-size:48px">🔒 ALL LOCKED IN</h1><p class=m>Everyone gather round the screen 👀</p><button class="b y" onclick=cdn()>Reveal answers</button></div>`);snd(300,.2,'square')}
+function cdn(){const id=st.rid=Math.random();let n=3;const tick=()=>{if(st.rid!==id)return;if(!n)return reveal2();R(`<div class=c style="text-align:center"><div class=m>Get ready…</div><h1 style="font-size:150px;animation:cd .7s ease-out both">${n}</h1></div>`);snd(300+(3-n)*130,.15,'square');n--;setTimeout(tick,750)};tick()}
+function nm(t,f){let x=t.toLowerCase().replace(/&/g,' and ').replace(/['’`]/g,'').replace(/[^\p{L}\p{N}£ ]+/gu,' ').replace(/\s+/g,' ').trim().replace(/^(a|an|the) /,'');x=AL[x]||x;if(f&&x.length>4&&/[^s]s$/.test(x))x=x.slice(0,-1);return x}
+/* ---------- menus ---------- */
+function home(){cl();st.on=0;st.id=0;st.rid=0;clearTimeout(st.tm);atHome=1;R(`<div class=c><h1>SAME<br>BRAIN</h1><p class=m>Think like your friends. Or don't.</p><button class="b y" onclick=setup()>Set up game</button><button class="b g" onclick=rules()>How to play</button></div>`)}
+function tog(){S.sound^=1;sv();$('#sd').textContent=S.sound?'🔊':'🔇';snd(500)}
+const cl=()=>{const o=$('#ov');o&&o.remove()},ov=h=>{cl();document.body.insertAdjacentHTML('beforeend',`<div id=ov>${h}</div>`)};
+function leave(){if(!st.on)return home();ov(`<div class=c style="text-align:center"><h2>Leave game?</h2><p class=m>Scores and progress will be lost.</p><button class="b y" onclick=cl()>Keep playing</button><button class="b g" onclick="home()">Leave to home</button></div>`)}
+function rules(first){if(first){S.seen=1;sv()}ov(`<div class=c style="justify-content:flex-start"><h2>How to play</h2><div class=card>📱 One phone, passed around. Everyone secretly picks an answer, then all are revealed together.<br>🎯 <b>Match the majority: 2 pts.</b> Everyone agrees: <b>+5 Perfect Sync</b>. Most points wins.</div><h3>Modes</h3><div class="card sm">🎯 <b>Classic</b>: divisive multiple choice. Think like the group. Special round every 4th.</div><div class="card sm">👀 <b>Most Likely</b>: vote for any player, yourself included, on who is most likely to… Match the majority.</div><div class="card sm">⚖️ <b>Split</b>: each round one player writes a prompt and two options and sits out. Everyone else votes. Majority = 2 pts. The writer earns 2 pts for every vote on the smaller side, so closer splits and bigger groups are worth more (a perfect split gets a special animation). Best with an odd number of players.</div><div class="card sm">🧑‍🤝‍🧑 <b>Know Me</b>: one player is the subject each round. Everyone else guesses what they picked.</div><div class="card sm">⏭️ <b>Skips</b>: the group has 2 question skips per game. ⚔️ <b>Ties</b> for first go to sudden death.</div><div class="card sm">🔞 <b>Spicy</b> (18+ toggle, 3 intensities): personal, divisive questions in Classic, Most Likely and Know Me.</div><div class="card sm">🔥 <b>Streaks</b>: match the majority 3 rounds in a row for +2 bonus.</div><div class="card sm">🎡 <b>Mystery Wheel</b>: once per player per game, spin before locking an answer for a bonus that only helps you.</div><h3>Special rounds</h3>${Object.keys(INFO).slice(1).map(k=>`<div class=sm><b>${INFO[k][0]}</b> <span class=m>${INFO[k][1]}</span></div>`).join('')}<button class="b y" onclick=cl()>${first?'Skip / Got it':'Got it'}</button></div>`)}
+function seg(l,on,js){return`<button class="${on?'on':''}" onclick="${js};sv();setup()">${l}</button>`}
+function setup(){const M={classic:['Classic','Divisive multiple choice. Match the majority to score. Special round every 4th.'],likely:['Most Likely','Vote for any player, yourself included, on who is most likely to… Match the majority.'],split:['Split','Each round one player writes a prompt and two options, everyone else votes. Split the room evenly to score big!'],know:['Know Me','One player is the subject each round and answers honestly. Everyone else guesses their pick: 2 pts per correct guess, and the subject earns 1 pt per friend who reads them.']};
+R(`<div class=c style="justify-content:flex-start"><h2>Players (${S.names.length})</h2>${S.names.map((n,i)=>`<div class=row><input maxlength=14 value="${E(n)}" placeholder="Player ${i+1}" oninput="S.names[${i}]=this.value"><button class=i onclick="rnd(${i})">🎲</button>${S.names.length>3?`<button class=i onclick="rm(${i})">✕</button>`:''}</div>`).join('')}${S.names.length<12?'<button class="b g" onclick=add()>+ Add player</button>':''}<h3>Rounds</h3><div class=seg>${[5,10,15].map(n=>seg(n,S.rounds==n,`S.rounds=${n}`)).join('')}</div><h3>Mode</h3><div class=seg>${Object.keys(M).map(k=>seg(M[k][0],S.mode==k,`S.mode='${k}'`)).join('')}</div><p class="m sm">${M[S.mode][1]}${S.mode=='split'?` ${S.names.length%2?'✅ Odd player count: perfect splits are possible.':'⚠️ Best with an odd number of players: a perfect split needs an even number of voters.'}`:''}</p><h3>Special rounds</h3><div class=seg>${seg('On',S.sp,'S.sp=1')}${seg('Off',!S.sp,'S.sp=0')}</div><p class="m sm">Twist rounds that pop up every few rounds and change how you score.</p><button class=g style="border:0;border-radius:12px;padding:10px" onclick=spx()>❓ What are special rounds?</button><h3>Spicy 🔞 (18+)</h3><div class=seg>${seg('Off',!S.sx,'S.sx=0')}<button class="${S.sx?'on':''}" onclick="${S.sx?'':'spicy()'}">On</button></div>${S.sx?`<h3>Intensity</h3><div class=seg>${['🍿 Messy','🌶️ Savage','🔥 Unhinged'].map((l,i)=>seg(l,S.lv==i,`S.lv=${i}`)).join('')}</div><p class="m sm">${['Relatable habits and harmless hypocrisy.','Exes, jealousy, secret DMs and drama (includes Messy).','The most provocative and divisive (includes all levels).'][S.lv]}</p>`:'<p class="m sm">Personal, divisive questions for Classic, Most Likely and Know Me.</p>'}<button class="b y" onclick=go()>Start game</button><button class="b g" onclick=home()>Back</button></div>`)}
+function spicy(){R(`<div class=c style="text-align:center"><h1 style="font-size:60px">🔞</h1><h2>Spicy mode</h2><p class=m>Adult and morally grey questions. Everyone playing must be 18+.</p><button class="b y" onclick="S.sx=1;sv();setup()">I'm 18+, turn it on</button><button class="b g" onclick=setup()>Cancel</button></div>`)}
+const add=()=>{S.names.push('');sv();setup()},rm=i=>{S.names.splice(i,1);sv();setup()};
+function rnd(i){const f=NM.filter(x=>!S.names.includes(x));S.names[i]=f[Math.floor(Math.random()*f.length)];sv();setup()}
+function go(){const n=S.names.map(x=>x.trim());if(n.some(x=>!x))return T('Everyone needs a name (try 🎲)');if(new Set(n.map(x=>x.toLowerCase())).size<n.length)return T('Names must be unique');sv();start(n)}
+function quick(){S.rounds=10;S.mode='classic';S.sp=1;S.sx=0;start(shuf(NM).slice(0,4))}
+/* ---------- game ---------- */
+function start(n){const lk=S.mode=='likely';let p=S.sx?[].concat(...(lk?SPL:SPX).slice(0,S.lv+1)):BANK[lk?'lk':S.mode=='know'?'kn':'mc'];if(S.sx&&p.length<S.rounds)p=p.concat(BANK[lk?'sl':'sx']);const cap=a=>{if(lk)return a;const t=a.filter(q=>q.ch.length==2),o=a.filter(q=>q.ch.length!=2);return o.concat(shuf(t).slice(0,Math.ceil(o.length/9)))};let f=cap(p.filter(q=>!used.has(q.t)));if(f.length<S.rounds+5){used.clear();f=cap(p)}const sh=shuf(f),sp=S.mode=='split',qs=sp?Array(S.rounds).fill(0):sh.slice(0,S.rounds);qs.forEach(q=>used.add(q.t));st={P:n.map(x=>({n:x,pts:0,maj:0,sync:0,pc:0,mn:0,solo:0,st:0,bs:0,wu:0})),qs,i:0,pr:0,on:1,sk:2,ex:sp?[]:sh.slice(S.rounds,S.rounds+5)};round()}
+function rt(i){if(st.sd||S.mode=='know'||S.mode=='split')return'normal';if(!S.sp)return'normal';if(S.sx&&i%5==2)return S.mode=='likely'?(i%10==2?'finger':'hot'):'verdict';const ev=4;if(i%ev!=ev-1)return'normal';const L=st.sl=st.sl||shuf(['predict','double','minority','sync','freeze','instant']);return L[((i+1)/ev-1)%L.length]}
+const bd=()=>st.r.ty!='normal'?`<span class=tag>${INFO[st.r.ty][0]}</span>`:'<span></span>';
+function round(){const i=st.i;if(S.mode=='split'&&!st.qs[i])return sauth();const q=st.qs[i],ty=rt(i);st.r={q,ty,a:[],t:0,wh:{}};if(ty=='hot'){if(!st.hl||!st.hl.length)st.hl=shuf(st.P.map(p=>p.n));st.r.hot=st.hl.pop()}if(S.mode=='know'){st.sq=st.sq||shuf(st.P.map((_,j)=>j));st.r.sub=st.sq[i%st.P.length];st.r.t=st.r.sub}if(S.mode=='split'){const a=st.pa;st.r.spl=a;st.r.t=(a+1)%st.P.length;st.r.need=st.P.length-1}if(ty=='predict')st.pr++;
+R(`<div class="c sp" style="--ac:${AC[ty]||'#8b5cf6'}"><div class=lb><span class=m>Round ${i+1} / ${st.qs.length}${S.sx?' · 🔞':''}${st.sd?' · ⚔️ SUDDEN DEATH':''}</span>${bd()}</div><div class="card q">${E(q.t)}</div>${q.pick?'<p class=m>Answer by picking a player.</p>':''}<p class=m>${st.r.spl>=0?SPT:INFO[ty][1]}${st.r.hot?`<br>🎯 Randomly chosen: <b>${E(st.r.hot)}</b>`:''}${st.r.spl>=0?`<br>✍️ Written by <b>${E(st.P[st.r.spl].n)}</b>, who sits this one out. Everyone else votes.`:''}${st.r.sub>=0?`<br>🎯 Subject: <b>${E(st.P[st.r.sub].n)}</b> answers honestly first. Everyone else guesses their pick.`:''}</p><button class="b y" onclick=pass()>Pass the phone →</button>${st.sk>0&&st.ex.length>0&&!st.sd?`<button class="b g" onclick=skq()>⏭️ Skip question (${st.sk} left)</button>`:''}</div>`);snd(440)}
+function pass(){const p=st.P[st.r.t];st.lock=0;st.ph=(st.r.ty=='predict'||(st.r.ty=='hot'&&st.P[st.r.t].n==st.r.hot))?'pred':'ans';R(`<div class=c style="text-align:center"><div class=m>Pass the phone to</div><h1 style="font-size:52px;word-break:break-word">${E(p.n)}</h1><p class=m>Everyone else, look away 👀</p><button class="b y" onclick=inp()>I'm ${E(p.n)}: show question</button></div>`)}
+function inp(){const r=st.r,q=r.q,pr=st.ph=='pred',t0=pr?0:TM[r.ty]||0,ch=q.pick?st.P.map(p=>p.n):q.ch;st.ch=ch;st.sel=null;st.lock=0;
+R(`<div class=c>${pr?'<span class=tag>🔮 PREDICT THE CROWD</span>':bd()}<div class="card q">${E(q.t)}${st.r.hot?`<div class="m sm">🪑 Hot seat: ${E(st.r.hot)}</div>`:''}${r.sub>=0?`<div class="m sm">🎯 Subject: ${E(st.P[r.sub].n)}</div>`:''}</div><p class=m>${pr?(q.pick?'Guess who the group will pick most':'Guess the MOST POPULAR answer'):(r.sub>=0?(r.t==r.sub?'Your honest answer':'Guess what '+E(st.P[r.sub].n)+' picked'):'Your secret answer')}</p>${t0?`<div class=bar id=tb style="width:100%;transition:width ${t0}s linear"></div>`:''}${ch.length?ch.map((c,i)=>`<button class="b g ch" onclick="pk(${i})">${E(c)}</button>`).join(''):`<input id=in maxlength=40 autocomplete=off placeholder="Type here…" onkeydown="if(event.key=='Enter')lk()">`}${ch.length&&!(r.ty=='instant'&&!pr)?'<button class="b y" onclick=lk()>🔒 Lock in</button>':ch.length?'':'<button class="b y" onclick=lk()>🔒 Lock in</button>'}${pr?'':`<button class=g id=wb style="border:0;border-radius:14px;padding:12px" onclick=wh()>${st.P[r.t].wu?'✓ Wheel Used':'🎡 Mystery Wheel — Available'}</button>`}</div>`);
+if(t0){setTimeout(()=>{const b=$('#tb');b&&(b.style.width='0')},50);const me=st.r.t,ph=st.ph;st.tm=setTimeout(()=>{if(st.r.t==me&&st.ph==ph)fin(cur())},t0*1000)}}
+const cur=()=>st.ch.length?st.sel||'':($('#in')?$('#in').value.trim():'');
+function pk(i){if(st.r.ty=='instant'&&st.ph=='ans')return fin(st.ch[i]);st.sel=st.ch[i];document.querySelectorAll('.ch').forEach((b,j)=>b.classList.toggle('sel',j==i));snd(380,.05)}
+function lk(){const v=cur();if(!v)return T('Pick or type an answer first');fin(v)}
+function fin(v){if(st.lock)return;st.lock=1;clearTimeout(st.tm);cl();snd(520);const r=st.r;if(st.ph=='pred'){r.pd=v;st.ph='ans';return inp()}r.a.push({p:r.t,a:v,pd:r.pd||''});r.pd='';r.c=(r.c||0)+1;r.t=(r.t+1)%st.P.length;r.c<(r.need||st.P.length)?pass():reveal()}
+function reveal2(){const r=st.r,q=r.q,fr=!q.pick&&!q.ch.length,A=r.a.map(x=>({...x,k:x.a?nm(x.a,fr):''})),m=new Map();
+A.forEach(x=>{if(!x.k)return;if(!m.has(x.k))m.set(x.k,{k:x.k,l:x.a,ps:[]});m.get(x.k).ps.push(x.p)});
+const G=[...m.values()].sort((a,b)=>b.ps.length-a.ps.length),V=A.filter(x=>x.k),mx=G.length?G[0].ps.length:0,mn=G.length?G[G.length-1].ps.length:0,all=G.length==1&&V.length==A.length,tk=G.filter(g=>g.ps.length==mx).map(g=>g.k),W=st.P.map(()=>({pt:0,w:[]}));
+const mp=Math.max(...st.P.map(p=>p.pts)),dbl=r.ty=='double'?2:1,subk=r.sub>=0?(A.find(y=>y.p==r.sub)||{}).k:'',perfect=r.spl>=0&&G.length==2&&G[0].ps.length==G[1].ps.length,hung=r.ty=='verdict'&&mx*2<=V.length;st.pm=st.pm||{};G.forEach(g=>{for(let a=0;a<g.ps.length;a++)for(let b=a+1;b<g.ps.length;b++){const k=Math.min(g.ps[a],g.ps[b])+'-'+Math.max(g.ps[a],g.ps[b]);st.pm[k]=(st.pm[k]||0)+1}});if(q.pick)A.forEach(x=>{const t=st.P.find(p=>p.n==x.a);t&&(t.vr=(t.vr||0)+1)});
+A.forEach(x=>{const w=W[x.p],P=st.P[x.p],g=x.k&&m.get(x.k),top=g&&g.ps.length==mx,low=g&&g.ps.length==mn,wr=(r.wh||{})[x.p],spec=st.sd&&!st.td.includes(x.p);let base=0;const ad=(n,s)=>{if(spec)return;base+=n;w.w.push(`+${n} ${s}`)};
+if(r.spl>=0){if(perfect)ad(1,'perfect split');else if(top)ad(2,'majority')}else if(r.sub>=0){if(x.p==r.sub){const n=V.filter(y=>y.p!=r.sub&&y.k==subk).length;if(n){ad(n,'friends read you');if(!spec)P.rd=(P.rd||0)+n}}else if(x.k&&x.k==subk){ad(2,'knew them');if(!spec)P.kn=(P.kn||0)+1}}else if(!x.k)w.w.push('no answer');else if(r.ty=='minority'){if(low)ad(3,'smallest group')}else if(r.ty=='sync'){if(all)ad(5,'Perfect Sync')}else if(r.ty=='verdict'){if(top)ad(hung?1:3,hung?'hung jury':'verdict reached');if(all)ad(5,'Perfect Sync')}else{if(top)ad(2,'majority match');if(all)ad(5,'Perfect Sync')}
+if((r.ty=='predict'||r.ty=='hot')&&x.pd){if(tk.includes(nm(x.pd,fr))){ad(3,'crowd predicted');if(!spec)P.pc++;if(wr=='mr')ad(3,'🎡 Mind Reader')}else w.w.push('prediction missed')}
+const mm=r.spl>=0?(!perfect&&x.k&&top):r.sub>=0?(x.p!=r.sub&&x.k&&x.k==subk):x.k&&top&&r.ty!='minority'&&(r.ty!='sync'||all)&&!hung,mul=Math.min(3,dbl*(wr=='dbl'?2:wr=='tt'?3:1));let tot=base*mul;if(base&&mul>1)w.w.push(`×${mul} round multiplier`);
+const fl=(n,s)=>{if(spec)return;tot+=n;w.w.push(`+${n} ${s}`)};
+if(wr=='bb')fl(3,'🎡 Bonus Brain');if(wr=='l7')fl(7,'🎡 Lucky Seven');if(wr=='gr')fl(5,'🎡 Gold Rush');if(wr=='gs'&&base>0)fl(3,'🎡 Golden Sync');if(wr=='ss'&&mm)fl(2,'🎡 Streak Starter');
+if(wr=='ps')fl(all?5:2,'🎡 Sync Protection');if(wr=='mr'&&!x.pd)fl(2,'🎡 Mind Reader');if(wr=='cb')fl(P.pts<mp?4:2,'🎡 Comeback Boost');if(wr=='sv'&&P.st==0)fl(1,'🎡 Streak Saver');
+if(spec)w.w.push('spectating (sudden death)');else if(mm){P.st++;if(P.st%3==0)fl(2*dbl,'🔥 streak bonus')}else if(wr=='sv'&&P.st>0)w.w.push('🛡️ streak saved');else P.st=0;
+P.bs=Math.max(P.bs,P.st);if(spec)tot=0;w.pt=tot;P.pts+=tot;if(!spec){if(top)P.maj++;if(all)P.sync++;if(low&&G.length>1)P.mn++;if(g&&g.ps.length==1&&V.length>1)P.solo++}});
+if(r.ty=='finger'&&mx)tk.forEach(k=>{const j=st.P.findIndex(p=>nm(p.n,false)==k);if(j>=0){st.P[j].pts+=2;W[j].pt+=2;W[j].w.push('+2 👉 in the spotlight ('+mx+' votes)')}});
+if(r.spl>=0){const a=G.length?G[0].ps.length:0,b=G.length>1?G[1].ps.length:0,ap=G.length<2?0:2*b;r.ap=ap;st.P[r.spl].pts+=ap;W[r.spl].pt=ap;if(perfect)st.P[r.spl].sync++}st.d=W.map(w=>w.pt);const chaos=G.length>1&&G.length==V.length&&V.length>1;
+R(`<div class=c style="justify-content:flex-start"><div class=lb>${bd()}<span class=m>Round ${st.i+1}</span></div><div class=q style="font-size:20px">${E(q.t)}</div>${r.spl>=0?(perfect?`<div class="big perf">⚖️ PERFECT SPLIT!</div><div class=sfx><i></i><i></i></div><div class=big style="font-size:20px">✍️ ${E(st.P[r.spl].n)} +${r.ap}</div>`:`<div class=big style="font-size:22px">✍️ ${E(st.P[r.spl].n)}: ${G[0]?G[0].ps.length:0}–${G[1]?G[1].ps.length:0} split, +${r.ap}</div>`):''}${r.spl>=0?'':all?'<div class=big>🧠 PERFECT SYNC!</div>':chaos?'<div class=big>💥 TOTAL CHAOS</div>':G.length>1&&G[0].ps.length==G[1].ps.length?'<div class=big>⚔️ DEADLOCK</div>':V.length>=4&&mx/V.length<=.5?'<div class=big>THE ROOM IS DIVIDED</div>':''}${r.sub>=0?`<div class=big style="font-size:20px">🎯 ${E(st.P[r.sub].n)} picked: ${E((A.find(y=>y.p==r.sub)||{}).a||'(no answer)')}</div>`:''}${r.ty=='verdict'&&G.length?`<div class=big style="font-size:20px">⚖️ ${hung?'HUNG JURY: no answer has more than half':'VERDICT: '+E(G[0].l)} (${mx} of ${V.length})</div>`:''}${q.pick&&G.length?`<div class=big style="font-size:22px">👉 ${tk.length>1?'TIE: '+tk.map(k=>E(m.get(k).l)).join(' & '):E(G[0].l)}</div>`:''}${G.map((g,i)=>`<div class="card grp" style="animation-delay:${i*.4+.2}s"><div class=lb><b>${E(g.l)}</b><span>×${g.ps.length}</span></div><div class=bar style="width:${g.ps.length/A.length*100}%"></div><div class="m sm">${g.ps.map(p=>E(st.P[p].n)).join(', ')}</div></div>`).join('')}<h3>Points</h3>${A.map((x,i)=>`<div class="grp sm" style="animation-delay:${G.length*.4+.3}s"><b>${E(st.P[x.p].n)}</b> <span class=m>${E(W[x.p].w.join(', ')||'0 pts')}</span></div>`).join('')}<button class="b y" onclick=board()>Leaderboard →</button></div>`);
+if(perfect){jingle([392,523,659,784,1047,1319]);burst()}else if(all){jingle([523,659,784,1047]);burst()}else jingle(chaos?[300,250,200]:[400,500,600])}
+function burst(){const e=['🎉','✨','🧠','💜'];document.body.insertAdjacentHTML('beforeend',[...Array(16)].map((_,i)=>`<i class=bs style="left:${i*6.2}%;animation-delay:${Math.random()*.6}s">${e[i%4]}</i>`).join(''));setTimeout(()=>document.querySelectorAll('.bs').forEach(x=>x.remove()),3300)}
+const rank=L=>L.map((p,i)=>L.findIndex(x=>x.pts==p.pts)+1);
+function board(){const L=st.P.map((p,i)=>({...p,d:st.d[i]})).sort((a,b)=>b.pts-a.pts),rk=rank(L),last=st.i+1>=st.qs.length;
+R(`<div class=c><h2>Leaderboard</h2>${L.map((p,i)=>`<div class="card lb grp" style="animation-delay:${i*.12}s"><span><b>${rk[i]}.</b> ${E(p.n)} ${last||p.st<2?'':'<span class=sm>🔥 '+p.st+' streak</span>'}${last||p.wu?'':' <span class=sm>🎡</span>'}</span><span>${last?'':p.d?`<span style="color:var(--y)">+${p.d}</span> `:''}<b>${last?'?':p.pts}</b></span></div>`).join('')}<button class="b y" onclick=nxt()>${last?(tied()?'⚔️ Sudden death':'🏆 Final results'):'Next round →'}</button></div>`);jingle([440,550])}
+const tied=()=>{const m=Math.max(...st.P.map(p=>p.pts));return st.P.filter(p=>p.pts==m).length>1&&st.ex.length>0};
+function nxt(){st.i++;if(st.i<st.qs.length)return round();if(!tied())return finish();const m=Math.max(...st.P.map(p=>p.pts));st.sd=1;st.td=st.P.map((p,i)=>p.pts==m?i:-1).filter(i=>i>=0);st.qs.push(st.ex.pop());R(`<div class=c style="text-align:center"><h1 style="font-size:46px">⚔️ SUDDEN DEATH</h1><p class=m>Tied for first:</p><div class=q>${st.td.map(i=>E(st.P[i].n)).join(' vs ')}</div><p class=m>One extra question. Everyone answers, but only the tied players can score.</p><button class="b y" onclick=round()>Let's go</button></div>`);jingle([300,250,200,300])}
+function sauth(){const i=st.i,n=st.P.length;st.sq=st.sq||shuf(st.P.map((_,j)=>j));const a=st.pa=st.sq[i%n];st.lock=0;R(`<div class=c style="text-align:center"><div class=m>Round ${i+1} / ${st.qs.length}</div><div class=m>Pass the phone to</div><h1 style="font-size:52px;word-break:break-word">${E(st.P[a].n)}</h1><p class=m>Write a prompt with two options. Try to split the room evenly!</p><button class="b y" onclick=swr()>I'm ${E(st.P[a].n)}: write my split</button></div>`)}
+function swr(){R(`<div class=c><h2>Write your split</h2><input id=sp1 maxlength=90 placeholder="Prompt, e.g. Pineapple on pizza?"><input id=sa maxlength=30 placeholder="Option A"><input id=sb maxlength=30 placeholder="Option B"><p class="m sm">The closer the vote is to an even split, the more points you earn. You sit out the voting.</p><button class="b g" onclick=ssg()>🎲 Suggest a prompt</button><button class="b y" onclick=ssv()>🔒 Lock in prompt</button></div>`);const e=$('#sp1');e&&e.focus()}
+function ssv(){if(st.lock)return;const t=$('#sp1').value.trim(),a=$('#sa').value.trim(),b=$('#sb').value.trim();if(!t||!a||!b)return T('Fill in the prompt and both options');if(nm(a)==nm(b))return T('Options must be different');st.lock=1;snd(520);st.qs[st.i]={t,ch:[a,b],pick:0};round()}
+function skq(){if(!st.sk||!st.ex.length)return;st.sk--;if(st.r.hot)st.hl.push(st.r.hot);if(st.r.ty=='predict')st.pr--;st.qs[st.i]=st.ex.shift();round()}
+function awards(){const P=st.P,a=[],pm=st.pm||{};let bk=null,bv=1;for(const k in pm)if(pm[k]>bv){bv=pm[k];bk=k}
+if(bk){const[x,y]=bk.split('-');a.push(['🧬','Most in sync pair',P[x].n+' & '+P[y].n,bv+' matches'])}
+[['🎯','Most accused',p=>p.vr||0,2,'votes'],['🐺','Lone wolf',p=>p.solo,2,'solo answers'],['🔥','Longest streak',p=>p.bs,3,'in a row'],['🧠','Best mind reader',p=>p.pc,2,'correct predictions']].forEach(([i,t,f,m,u])=>{let v=m-1,b=[];P.forEach(p=>{const z=f(p);if(z>v){v=z;b=[p.n]}else if(z==v&&b.length)b.push(p.n)});b.length&&a.push([i,t,b.join(' & '),v+' '+u])});return a}
+function ti(p){if(S.mode=='know'){const P=st.P,mk=Math.max(...P.map(q=>q.kn||0)),mr=Math.max(...P.map(q=>q.rd||0)),lr=Math.min(...P.map(q=>q.rd||0));return(p.kn||0)==mk&&mk>0?'Knows Everyone':(p.rd||0)==mr&&mr>0?'An Open Book':(p.rd||0)==lr&&mr>lr?'The Mystery':'The Wildcard'}const n=st.qs.length,a=p.maj/n;if(a>=.8)return'The Human Copy-Paste';const C=[[a,.55,'The Collective Mind'],[p.mn/n,.3,'The Contrarian'],[p.solo/n,.3,'The Chaos Merchant'],[st.pr?p.pc/st.pr:0,.5,'The Mind Reader']].filter(c=>c[0]>=c[1]).sort((x,y)=>y[0]/y[1]-x[0]/x[1]);return C.length?C[0][2]:'The Wildcard'}
+function finish(){R(`<div class=c style="text-align:center"><h2>And the winner is…</h2><h1 style="font-size:90px">🥁</h1></div>`);let k=0;const iv=setInterval(()=>snd(200+k++*60,.1,'square'),250);
+const id=st.id=Date.now();st.on=0;setTimeout(()=>{clearInterval(iv);if(st.id!==id)return;const L=[...st.P].sort((a,b)=>b.pts-a.pts),rk=rank(L),w=L.filter(p=>p.pts==L[0].pts);
+R(`<div class=c style="justify-content:flex-start"><div class=big style="font-size:20px">${w.length>1?'IT\'S A TIE!':'WINNER'}</div><h1 style="font-size:54px;text-align:center;word-break:break-word">👑 ${w.map(p=>E(p.n)).join(' & ')}</h1><p class=m style="text-align:center">${L[0].pts} points</p>${L.map((p,i)=>`<div class="card grp" style="animation-delay:${i*.15}s"><div class=lb><span><b>${rk[i]}.</b> ${E(p.n)}</span><b>${p.pts} pts</b></div><div style="color:var(--y)" class=sm>${ti(p)}</div><div class="m sm">${S.mode=='know'?(p.kn||0)+' correct guesses · read '+(p.rd||0)+' times':p.maj+' majority matches'} · best streak 🔥${p.bs} · ${p.sync} Perfect Sync${st.pr?` · ${p.pc}/${st.pr} predictions`:''}</div></div>`).join('')}${awards().length?'<h3>Awards</h3>':''}${awards().map(x=>`<div class="card grp"><b>${x[0]} ${x[1]}</b><div class=sm>${E(x[2])} <span class=m>· ${x[3]}</span></div></div>`).join('')}<button class="b y" onclick="start(st.P.map(p=>p.n))">🔁 Play again (fresh questions)</button><button class="b g" onclick=setup()>Change setup</button><button class="b g" onclick=home()>Main menu</button></div>`);jingle([523,659,784,1047,1319]);burst()},2000)}
+home();$('#sd').textContent=S.sound?'🔊':'🔇';
+</script></body></html>
