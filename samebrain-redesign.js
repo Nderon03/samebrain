@@ -92,7 +92,7 @@ let SS,LS;try{SS=store(sessionStorage);LS=store(localStorage)}catch(e){SS=LS={g(
 const lastSess=()=>{const l=LS.g('sblast');return l&&l.code&&l.pid&&Date.now()-l.t<108e5&&!(O&&O.code==l.code)?l:null};
 
 /* ---------- home ---------- */
-window.home=function(){cl();closeModal(1);st.on=0;st.id=0;st.rid=0;clearTimeout(st.tm);leaveRoom();atHome=1;const rj=lastSess();
+window.home=function(){cl();closeModal(1);SER=null;st.on=0;st.id=0;st.rid=0;clearTimeout(st.tm);leaveRoom();atHome=1;const rj=lastSess();
 R(`<div class=c data-scr=home style="justify-content:flex-start"><div class=hero>${IC?`<img class=brand-icon src="${IC}" alt="">`:''}<h1>SAME<br>BRAIN</h1><p class=tag2>Think like your friends. Or don't.</p></div>
 ${rj?`<button type=button class="big-b rj b" onclick=rejoin()><i class=ic style="font-style:normal">↩️</i><span><b>REJOIN ROOM ${E(rj.code)}</b><span class=d>Continue as ${E(rj.name)}</span></span></button>`:''}
 <button type=button class="big-b host b" onclick=hostSetup()><i class=ic style="font-style:normal">🎉</i><span><b>HOST A GAME</b><span class=d>Create a room and invite your friends</span></span></button>
@@ -100,7 +100,11 @@ ${rj?`<button type=button class="big-b rj b" onclick=rejoin()><i class=ic style=
 <button type=button class="big-b pp b" onclick=setup()><i class=ic style="font-style:normal">📱</i><span><b>PASS &amp; PLAY</b><span class=d>One phone, passed around the group</span></span></button>
 <h3>Game modes</h3><div class=mg>${Object.keys(MD).map(k=>`<div class=mc2 style="--ac:${MD[k][3]};min-height:0"><i class=ic style="font-style:normal">${MD[k][0]}</i><b>${MD[k][1]}</b><span class=d>${MD[k][2]}</span></div>`).join('')}</div>
 <div class=ft><span>Same Brain · Mature prompts optional</span><span><button type=button onclick=sets()>⚙️ Settings</button><button type=button onclick="rules()">How to play</button></span></div></div>`)};
-window.sets=function(){ov(`<div class=c data-scr=sets style="text-align:center"><h2>⚙️ Settings</h2><button type=button class="b g" onclick="tog();sets()">Sound: ${S.sound?'On 🔊':'Off 🔇'}</button><button type=button class="b g" onclick="cl();rules()">How to play</button><button type=button class="b g" onclick=clrAsk()>Clear saved data</button><button type=button class="b y" onclick=cl()>Done</button></div>`)};
+let BIP=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();BIP=e});addEventListener('appinstalled',()=>{BIP=null;T('Same Brain installed')});
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true,ios=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1);
+window.inst=()=>{if(!BIP)return;BIP.prompt();BIP.userChoice.finally(()=>{BIP=null;sets()})};
+const instUI=()=>standalone()?'':BIP?'<button type=button class="b g" onclick=inst()>📲 Install Same Brain</button>':ios()?'<p class="m sm">📲 To install: tap <b>Share</b>, then <b>Add to Home Screen</b>.</p>':'';
+window.sets=function(){ov(`<div class=c data-scr=sets style="text-align:center"><h2>⚙️ Settings</h2><button type=button class="b g" onclick="tog();sets()">Sound: ${S.sound?'On 🔊':'Off 🔇'}</button>${instUI()}<button type=button class="b g" onclick="cl();rules()">How to play</button><button type=button class="b g" onclick=clrAsk()>Clear saved data</button><button type=button class="b y" onclick=cl()>Done</button></div>`)};
 window.clrAsk=()=>modal({icon:'🧹',title:'Clear saved data?',body:'This removes saved player names, your display name and your settings on this device.',tone:'danger',btns:[['Cancel','g'],['Clear data','r',()=>{try{localStorage.removeItem('samebrain');localStorage.removeItem('sblast')}catch(e){}location.reload()}]]});
 window.rejoin=()=>{const l=lastSess();if(!l)return home();joinScr(l.code);$('#jn').value=l.name;joinGo(1)};
 
@@ -121,7 +125,7 @@ ${inRoom?'':`<h3>Your name</h3><input id=hn maxlength=14 autocomplete=nickname p
 <h3>Mode</h3><div class=mg>${cards(k=>`setMode('${k}');hsChg()`,S.mode,k=>{const l=lim(k),bad=inRoom&&n>l[1];return`<span class="rng${bad?' bad':''}">${l[0]}–${l[1]} players${bad?' · too many':''}</span>`})}</div>
 <p class="m sm">${MD[S.mode][1]} supports <b>${L[0]}–${L[1]} players</b> online.${S.mode=='split'?' Each round the writer sits out the vote.':''}${S.mode=='know'?' Each player takes turns being the subject.':''}${inRoom&&n>L[1]?` <b style="color:#fca5a5">You have ${n}: remove ${n-L[1]} or pick another mode.</b>`:''}</p>
 <h3>Rounds</h3><div class=seg>${[5,10,15].map(x=>sp(x,S.rounds==x,`S.rounds=${x}`)).join('')}</div>
-<h3>Special rounds</h3><div class=seg>${sp('On',S.sp,'S.sp=1')}${sp('Off',!S.sp,'S.sp=0')}</div>
+${spUI('hsChg()')}
 ${S.mode=='split'?'':matUI('hsChg()')}
 <p class=er id=er role=status aria-live=polite></p>
 ${inRoom?'<button type=button class="b y" onclick=hsDone()>Done</button>':'<button type=button class="b y" id=mkb onclick=mkRoom()>Create game</button><button type=button class="b g" onclick=home()>Back</button>'}</div>`)};
@@ -232,9 +236,9 @@ roster(o,ps);if(o.in){saveSess(o);window.SBG&&SBG.sync();lob()}}
 /* host: admit or refuse new arrivals, free seats of players who have been gone too long (lobby only) */
 function hostCheck(o,ps){const m=o.meta,now=Date.now(),cap=lim(m.cfg.mode)[1];let ch=0;
 for(const p of ps){if(p.pid===o.pid||p.host||m.ros.includes(p.pid))continue;
-const nm=String(p.name).trim().slice(0,14),why=m.ban.includes(p.pid)?'kicked':m.st&&!m.gros.includes(p.pid)?'started':m.ros.length>=cap?'full':m.ros.some(q=>String(m.nm[q]||'').toLowerCase()===nm.toLowerCase())?'name':'';
+const nm=String(p.name).trim().slice(0,14),why=m.ban.includes(p.pid)?'kicked':m.ros.length>=cap?'full':m.ros.some(q=>String(m.nm[q]||'').toLowerCase()===nm.toLowerCase())?'name':'';
 if(why){if(!o.den[p.pid]||now-o.den[p.pid]>3000){o.den[p.pid]=now;LOG('refusing',p.pid,why);rsend({k:'deny',pid:p.pid,why,cap,mode:m.cfg.mode,n:m.ros.length})}continue}
-LOG('admitting',nm,p.pid);m.ros.push(p.pid);m.nm[p.pid]=nm;delete o.gone[p.pid];ch=1}
+LOG('admitting',nm,p.pid);if(m.st&&!m.gros.includes(p.pid))T(nm+' joined and will play from the next game');m.ros.push(p.pid);m.nm[p.pid]=nm;delete o.gone[p.pid];ch=1}
 const live=new Set(ps.map(p=>p.pid));clearTimeout(o.pt);
 if(!m.st){for(const pid of m.ros){if(pid===o.pid)continue;if(live.has(pid))delete o.gone[pid];else o.gone[pid]=o.gone[pid]||now}
 for(const pid in o.gone)if(now-o.gone[pid]>=GRACE_LOBBY||!m.ros.includes(pid)){if(m.ros.includes(pid)){LOG('freeing seat of',m.nm[pid]);m.ros=m.ros.filter(x=>x!==pid);delete m.nm[pid];ch=1}delete o.gone[pid]}
@@ -261,7 +265,7 @@ const denyMsg=(m,code)=>({kicked:'You were removed from room '+code+' by the hos
 
 /* ---------- kicking ---------- */
 window.kickAsk=pid=>{const o=O;if(!o||!o.host)return;const p=o.all.find(x=>x.pid===pid);if(!p||p.host)return;
-modal({tone:'danger',icon:av(p.name),title:'REMOVE PLAYER?',body:`Are you sure you want to remove <b>${E(p.name)}</b> from this room?<p class="m sm">They will be disconnected from the current room.</p>`,btns:[['CANCEL','g'],['REMOVE PLAYER','r',()=>kickDo(pid,p.name)]]})};
+modal({tone:'danger',icon:av(p.name),title:'REMOVE PLAYER?',body:`Are you sure you want to remove <b>${E(p.name)}</b> from this room?<p class="m sm">They will be disconnected from the current room.${o.meta.st?' Their points so far stay on this game\'s scoreboard.':''}</p>`,btns:[['CANCEL','g'],['REMOVE PLAYER','r',()=>kickDo(pid,p.name)]]})};
 function kickDo(pid,name){const o=O;if(!o||!o.host||!o.meta)return;const m=o.meta;
 if(!m.ros.includes(pid)){lob();return T(name+' already left the room')}
 m.ban.push(pid);m.ros=m.ros.filter(x=>x!==pid);delete m.nm[pid];delete o.gone[pid];rsend({k:'kick',pid});pushMeta();T(name+' was removed')}
@@ -306,14 +310,13 @@ if(mine&&mine.host&&mine.room&&(!H||H.pid===pid||!outranks(H,mine.room)))return 
 if(!H)throw readPl(o).length?SBE('NOHOST','Room '+code+' exists but its host is reconnecting. Try again in a few seconds.'):SBE('NOROOM','Room '+code+' wasn\'t found. It may have ended or expired, or the code may be wrong.');
 o.room=H;const cap=lim(H.cfg.mode)[1],inR=H.ros.includes(pid);
 if((H.ban||[]).includes(pid))throw SBE('KICKED',denyMsg({why:'kicked'},code));
-if(H.st&&!(H.gros||[]).includes(pid))throw SBE('STARTED',denyMsg({why:'started'},code));
 if(!inR&&H.ros.length>=cap)throw SBE('FULL',denyMsg({why:'full',n:H.ros.length,cap,mode:H.cfg.mode},code));
 if(!inR&&H.ros.some(q=>String(H.nm[q]||'').toLowerCase()===n.toLowerCase()))throw SBE('NAME',denyMsg({why:'name'},code));
 o.meta={pid,name:n,host:0};o.deny=null;await reg(o);
 er('Waiting for the host to let you in…',0,1);
 const okd=await until(()=>o.dead||o.deny||(o.room&&o.room.ros.includes(pid)),8000,120);if(o.dead)return;
 if(o.deny)throw SBE('DENY',denyMsg(o.deny,code));if(!okd)throw SBE('NORESP','The host didn\'t respond. Please try again.');
-o.in=1;saveSess(o);roster(o,readPl(o));cs(o.live?'live':'reconnecting');LOG('joined room',code);lob(1);if(o.room.st&&window.SBG)SBG.resub()}
+o.in=1;saveSess(o);roster(o,readPl(o));cs(o.live?'live':'reconnecting');LOG('joined room',code);lob(1);if(o.room.st&&(o.room.gros||[]).includes(pid)&&window.SBG)SBG.resub()}
 catch(e){fail(e)}finally{busy=0;btn('#jb')}};
 /* host tab reloaded: restore the room (and the game, from this tab's snapshot) */
 function reclaim(o,mine){LOG('reclaiming host role for',o.code);o.host=1;o.meta={...mine.room,pid:o.pid,name:o.name,host:1};o.room=o.meta;o.in=1;
@@ -331,7 +334,8 @@ modal({icon:'🚪',title:'Leave room?',body:o.host?(nx?`You're the host. Hosting
 const _lv=window.leave;window.leave=()=>O&&O.in?leaveAsk():_lv();
 
 function lob(first){const o=O;if(!o||!o.in||document.body.classList.contains('ol'))return;if(!first&&!$('#lb'))return;const R0=o.room;if(!R0)return;
-if(R0.st&&!o.host)return R(`<div class=c id=lb data-scr=lw style="text-align:center"><h2>🎮 Game in progress</h2><p class=m>Syncing with the host<span class=dots></span></p><button type=button class="b g" onclick=leaveAsk()>Leave room</button></div>`);
+if(R0.st&&!o.host)return(R0.gros||[]).includes(o.pid)?R(`<div class=c id=lb data-scr=lw style="text-align:center"><h2>🎮 Game in progress</h2><p class=m>Syncing with the host<span class=dots></span></p><button type=button class="b g" onclick=leaveAsk()>Leave room</button></div>`)
+:R(`<div class=c id=lb data-scr=late style="text-align:center;align-items:center"><div class=kx style="background:radial-gradient(circle,#22c55e33,#22c55e0d);box-shadow:0 0 0 1px #22c55e55,0 0 50px -10px #22c55e88">🎟️</div><span class=kick>Room ${o.code} · ${o.all.length} / ${lim((R0.cfg||{}).mode)[1]} players</span><h2>You're in!</h2><p class=m>A game is already in progress. You'll join automatically when the host starts the next one.</p><p class="m sm">Waiting for the next game<span class=dots></span></p><button type=button class="b g" style="width:100%" onclick=leaveAsk()>Leave room</button></div>`);
 const c=R0.cfg||{},M=MD[c.mode]||MD.classic,L=lim(c.mode),P=o.all,n=P.length,H=o.host,hostOn=P.some(p=>p.host&&p.on),cpd=Date.now()-(o.cpd||0)<1500,live=P.filter(p=>p.on).length;
 const occ=n>L[1]?'bad':n==L[1]?'full':'',can=live>=L[0]&&n<=L[1];
 const hint=n>L[1]?`<div class=warn>⚠️ ${M[1]} supports up to ${L[1]} players online. ${H?`Remove ${n-L[1]} player${n-L[1]>1?'s':''} or choose another mode in Game settings.`:'The host needs to remove players or change the mode.'}</div>`
@@ -343,7 +347,7 @@ R(`<div class=c id=lb data-scr=lobby style="justify-content:flex-start"><div cla
 <div class=row><button type=button class="b g" onclick=shr()>🔗 Share invite</button><button type=button class="b g" onclick=qrT() aria-expanded="${!!o.qrOn}">${o.qrOn?'Hide QR':'▦ QR code'}</button></div>${o.qrOn&&o.qr?`<div class=qr>${o.qr}</div>`:''}</div>
 ${!hostOn?'<div class=warn>⏳ The host is reconnecting… If they don\'t come back, hosting passes to the next player automatically.</div>':''}
 ${R0.ed&&!H?'<div class=note>⚙️ The host is adjusting the game settings…</div>':''}
-<div class=cfgc style="--ac:${M[3]}"><span class=ic>${M[0]}</span><div><b>${M[1]}</b><div class="m sm">${c.rounds} rounds · Special rounds ${c.sp?'on':'off'}${c.sx&&c.mode!='split'?' · Mature ('+(LV[c.lv]||'').replace(/^\S+ /,'')+')':''}</div></div><span class=rng>${L[0]}–${L[1]} players</span></div>
+<div class=cfgc style="--ac:${M[3]}"><span class=ic>${M[0]}</span><div><b>${M[1]}</b><div class="m sm">${c.rounds} rounds${c.mode=='classic'||c.mode=='likely'?' · Special rounds '+(c.sp?'on':'off'):''}${c.sx&&c.mode!='split'?' · Mature ('+(LV[c.lv]||'').replace(/^\S+ /,'')+')':''}</div></div><span class=rng>${L[0]}–${L[1]} players</span></div>
 <div class=lb><h3>Players</h3><span class="occ ${occ}" aria-live=polite>${n} / ${L[1]} PLAYERS</span></div><div class="capb ${occ}"><i style="width:${Math.min(100,n/L[1]*100)}%"></i></div>
 <div class=pg>${P.map(card).join('')}</div>${hint}
 ${H?`<button type=button class="b y" id=sgb ${can?'':'disabled'} onclick=SBstart()>${live<L[0]?`Need ${L[0]-live} more player${L[0]-live>1?'s':''}`:n>L[1]?'Too many players for '+M[1]:'Start game'}</button><button type=button class="b g" onclick=hsOpen()>⚙️ Game settings</button>`:`<p class="m sm" style="text-align:center">${live<L[0]?`Waiting for ${L[0]-live} more player${L[0]-live>1?'s':''}`:'Waiting for the host to start the game'}<span class=dots></span></p>`}
