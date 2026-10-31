@@ -1,17 +1,18 @@
 # Same Brain – project folder
 
-Files
-- samebrain-redesign.js  – home/host/join/lobby screens + Supabase lobby (put your URL + anon key in CFG at the top)
-- samebrain-online.js    – synchronised online gameplay (load after the redesign file)
-- fix_index.py           – builds index.html from your game HTML
+Files (these three are the whole app)
+- index.html             – the game engine: question banks, modes, scoring, Pass & Play screens, results
+- samebrain-redesign.js  – home / host / join / lobby screens and online rooms over Supabase Realtime (URL + anon key in CFG at the top)
+- samebrain-online.js    – synchronised online gameplay, rematches and host hand-over (load after the redesign file)
 
-Setup
-1. Copy your game HTML (Same-Brain-Redesigned.html) into this folder.
-2. Run:  python3 fix_index.py     -> creates index.html (removes the duplicate inline redesign code, adds the two script tags if missing)
-3. Open samebrain-redesign.js and fill in:  const CFG={url:'https://xxxx.supabase.co',key:'your anon public key'};
-   (Supabase: create a free project, Settings > API. Use the anon/public key only. No tables or SQL needed.)
-4. Test locally:  python3 -m http.server 8000   then open http://localhost:8000
-5. Deploy: drag this whole folder onto https://app.netlify.com/drop  (online play needs HTTPS)
-   Only index.html and the two .js files are needed on the server; you can delete the rest.
+Online play uses Supabase Realtime (Presence + Broadcast) only. No tables, SQL or Edge Functions are needed.
+The host's device is the authority for its room (roster, capacity, removals, settings). This is client-side
+authority: it stops normal app use from breaking the rules, but it is not server-side security.
 
-Pass & Play works without Supabase.
+Online player limits: Classic 3–12, Most Likely 3–12, Know Me 3–10, Split 3–11. Pass & Play: 3–12.
+
+Test locally:  python3 -m http.server 8000   then open http://localhost:8000
+Deploy: drag this folder onto https://app.netlify.com/drop, or upload the three files to your existing Netlify site
+(online play needs HTTPS). Pass & Play works without Supabase.
+
+Debugging online play: open the browser console (F12); every online step is logged with a [SameBrain] prefix.
