@@ -12,6 +12,10 @@ document.head.insertAdjacentHTML('beforeend',`<style>.ol #app .c>.b.g:not(.ch):n
 .olw{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}.olw .bar{width:60%;animation:pl2 1.4s ease-in-out infinite}@keyframes pl2{50%{opacity:.35}}
 .hcl{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:4px}.hcl .pc{animation:none}
 @media(max-width:360px){#hc button{padding:11px 12px;font-size:14px}}
+.wq{display:flex;flex-wrap:wrap;justify-content:center;gap:12px 10px;margin-top:6px;max-width:420px}.wqi{display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;position:relative;opacity:.45;transition:opacity .3s}
+.wqi .av{width:46px;height:46px;font-size:19px;transition:box-shadow .3s}.wqi small{font-size:12px;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wqi i{position:absolute;top:28px;left:38px;width:22px;height:22px;border-radius:50%;background:#22c55e;color:#06210f;font-style:normal;font-size:13px;font-weight:900;display:grid;place-items:center;transform:scale(0);transition:transform .3s cubic-bezier(.2,.9,.3,1.4)}
+.wqi.ok{opacity:1}.wqi.ok .av{box-shadow:0 0 0 3px #22c55e}.wqi.ok i{transform:scale(1)}.wqc{font-size:14px;opacity:.7;margin-top:4px}
 .pubf{text-align:center;display:flex;flex-direction:column;gap:10px;margin-top:6px}</style>`);
 let G=null,A={},SN=null,seen=new Set(),PG='',GID='',starting=0;
 const o_=X.O,me=()=>o_().pid,isH=()=>{const o=o_();return!!(o&&o.in&&o.host)};
@@ -32,7 +36,7 @@ const _r=window.round;window.round=function(){_r();G&&G.on&&isH()&&oround()};
 const _n=window.nxt;window.nxt=function(){if(G&&G.on){if(G.nl)return;G.nl=1}_n()};
 const _f=window.finish;window.finish=function(){_f();if(G&&G.on&&isH()){G.done=1;hc();snap()}};
 function push(m){m.f=me();m.gid=G.gid;m.ros=G.ros;G.cur=m;send(m);on(m);snap()}
-function oround(){G.rid++;G.ans={};G.rev=0;G.nl=0;G.phase='q';G.lastH=null;clearTimeout(G.tm);PG='';
+function oround(){G.rid++;G.ans={};G.rev=0;G.nl=0;G.phase='q';G.lastH=null;clearTimeout(G.tm);clearTimeout(G.ot);PG='';
 if(S.mode=='split'&&!st.qs[st.i]){const a=st.pa;G.auth=a;G.spd=0;G.exp=[];push({k:'auth',rid:G.rid,to:G.ros[a],n:st.P[a].n});wcheck();return hc()}
 G.auth=null;const r=st.r,q=r.q;G.exp=st.P.map((_,j)=>j).filter(j=>!(r.spl>=0&&j==r.spl));G.chs=q.pick?st.P.map(p=>p.n):q.ch;
 push({k:'q',rid:G.rid,t:q.t,ch:q.ch,pick:q.pick?1:0,ty:r.ty,hot:r.hot||'',sub:r.sub>=0?r.sub:-1,spl:r.spl>=0?r.spl:-1,i:st.i,n:st.qs.length,names:st.P.map(p=>p.n),ros:G.ros,sx:S.sx?1:0,sd:st.sd?1:0});
@@ -42,7 +46,7 @@ function alive(){return new Set(o_().pl.map(p=>p.pid))}
 function wcheck(){if(!G||!G.on||G.auth==null||G.spd)return;if(alive().has(G.ros[G.auth])){clearTimeout(G.wt);G.wt=0;return}
 if(!G.wt)G.wt=setTimeout(()=>{G.wt=0;if(G&&G.on&&G.auth!=null&&!G.spd&&!alive().has(G.ros[G.auth])){T(st.P[G.auth].n+' is away, so a suggested prompt was used');SBskip()}},8000)}
 function check(){if(!G||!G.on||G.phase!='q'||G.rev||G.auth!=null)return;const al=alive(),need=G.exp.filter(j=>al.has(G.ros[j])||G.ans[G.ros[j]]),d=need.filter(j=>G.ans[G.ros[j]]).length;
-const p={k:'prog',rid:G.rid,gid:G.gid,d,t:need.length};send(p);on(p);if(need.length&&d==need.length)reveal()}
+const p={k:'prog',rid:G.rid,gid:G.gid,d,t:need.length,ps:need.map(j=>[st.P[j].n,G.ans[G.ros[j]]?1:0])};send(p);on(p);if(need.length&&d==need.length)reveal()}
 function reveal(){if(!G||!G.on||G.rev||G.phase!='q'||G.auth!=null||!st.r)return;G.rev=1;clearTimeout(G.tm);const r=st.r;
 r.a=G.exp.map(j=>{const a=G.ans[G.ros[j]];return{p:j,a:a?a.a:'',pd:a?a.pd:''}});G.phase='pub';reveal2();hc()}
 const banned=pid=>((o_().meta||{}).ban||[]).includes(pid);
@@ -52,7 +56,8 @@ function hsp(m){if(!G||!G.on||banned(m.pid)||G.auth==null||G.spd||m.gid!==G.gid|
 if(!t||!a||!b||nm(a)==nm(b))return;G.spd=1;st.qs[st.i]={t,ch:[a,b],pick:0};round()}
 /* host publishes every engine screen after reveal (results, leaderboard, final) */
 function watch(){if(G.mo)return;G.mo=new MutationObserver(()=>{if(!G||!G.on||G.phase!='pub')return;clearTimeout(G.ot);G.ot=setTimeout(pub,150)});G.mo.observe(app,{childList:true,subtree:true,characterData:true})}
-function pub(){if(!G||!G.on||!isH())return;const h=app.innerHTML;if(h===G.lastH)return;G.lastH=h;G.pub=h;send({k:'pub',gid:G.gid,ros:G.ros,html:h})}
+/* only results-phase screens are published; a send queued just before the next round started is dropped */
+function pub(){if(!G||!G.on||!isH()||G.phase!='pub')return;const c=app.cloneNode(true);c.querySelectorAll('[data-cu]').forEach(e=>e.textContent=e.dataset.cu.split(',')[1]);const h=c.innerHTML;if(h===G.lastH)return;G.lastH=h;G.pub=h;send({k:'pub',gid:G.gid,ros:G.ros,html:h})}
 function snap(){if(!G||!isH())return;try{const m={k:'snap',gid:G.gid,s:JSON.stringify(st),S:cfgS(S),ros:G.ros,rid:G.rid,ph:G.phase,done:G.done?1:0,ser:SER};send(m);X.save('sbsnap',m)}catch(e){}}
 function hc(){let e=$('#hc');if(!G||!G.on||!isH()||G.done){e&&e.remove();return}if(!e){document.body.insertAdjacentHTML('beforeend','<div id=hc></div>');e=$('#hc')}
 e.innerHTML=(G.phase=='q'?(G.auth!=null?'<button type=button onclick=SBskip()>⏭ Skip writer</button>':'<button type=button onclick=SBrev()>⏩ Reveal now</button>'):'')+'<button type=button onclick=SBpl() aria-label="Players">👥 Players</button><button type=button onclick=SBend()>⏹ End game</button>'}
@@ -78,7 +83,7 @@ case'go':if(fromH&&!isH()&&m.gid&&m.gid!==GID){GID=m.gid;A={};PG='';SN=null;clos
 case'auth':if(!fromH)break;adopt(m.gid);if(A.rid!=m.rid)PG='';document.body.classList.add('ol');m.to==me()?author(m):wait('✍️ '+E(m.n)+' is writing a split…');break;
 case'q':if(fromH){adopt(m.gid);ask(m)}break;
 case'pub':if(fromH&&!isH()&&m.gid===GID)showPub(m.html);break;
-case'prog':if(fromH&&m.gid===GID){PG=m.d+' / '+m.t+' answered';const e=$('#pg');e&&(e.textContent=PG)}break;
+case'prog':if(fromH&&m.gid===GID){PG=progH(m);const e=$('#pg');e&&(e.innerHTML=PG)}break;
 case'res':if(fromH&&m.to===me()){adopt(m.gid);resume(m)}break;
 case'snap':if(fromH&&!isH())SN=m;break;
 case'end':if(fromH&&!isH()&&(!m.gid||m.gid===GID||!GID))endLocal(m.to);break;
@@ -88,7 +93,8 @@ case'sp':if(isH()&&m.pid===m.f)hsp(m);break}}
 /* a question from a newer game than we know about (we missed 'go' while reconnecting): switch to it */
 function adopt(gid){if(gid&&gid!==GID){GID=gid;A={};PG=''}}
 function resFor(pid){if(!G||!G.on||!G.ros.includes(pid)||banned(pid))return;send({k:'res',to:pid,gid:G.gid,ph:G.phase,html:G.phase=='pub'?G.pub||app.innerHTML:'',q:G.phase=='q'?G.cur:null,answered:!!G.ans[pid]})}
-function wait(h){R(`<div class="c olw" data-scr=wait><h2>${h}</h2><p class=m id=pg>${PG}</p><div class=bar></div></div>`)}
+const progH=m=>(Array.isArray(m.ps)?`<div class=wq>${m.ps.slice(0,12).map(([n,k])=>`<span class="wqi${k?' ok':''}" title="${E(n)}${k?' has answered':' is still answering'}">${av(String(n))}<i>✓</i><small>${E(n)}</small></span>`).join('')}</div>`:'')+`<div class=wqc>${+m.d||0} / ${+m.t||0} answered</div>`;
+function wait(h){R(`<div class="c olw" data-scr=wait><h2>${h}</h2><div id=pg>${PG}</div><div class=bar></div></div>`)}
 function showPub(h){const d=document.createElement('div');d.innerHTML=h;d.querySelectorAll('script,iframe,object,embed,style,link,meta,button,input,form').forEach(x=>x.remove());d.querySelectorAll('*').forEach(x=>[...x.attributes].forEach(a=>(/^on/i.test(a.name)||/^\s*javascript:/i.test(a.value))&&x.removeAttribute(a.name)));
 const c=d.firstElementChild;if(!c)return;const fin=c.getAttribute('data-scr')=='fin';
 c.insertAdjacentHTML('beforeend',fin?'<div class=pubf><p class=m>The host will start a rematch, change the settings or return everyone to the lobby.</p><p class="m sm">Waiting for the host<span class=dots></span></p><button type=button class="b g keep" onclick=leaveAsk()>Leave room</button></div>':'<p class="m sm" style="text-align:center">Waiting for the host…</p>');
@@ -102,7 +108,7 @@ if(A.rid!=m.rid)PG='';const hotMe=m.ty=='hot'&&m.names[idx]==m.hot;clearTimeout(
 function draw(){const m=A,pr=m.ph=='pred',t0=pr?0:TMR[m.ty]||0,rid=m.rid,gid=m.gid;
 const lead=pr?(m.pick?'Guess who the group will pick most':'Guess the MOST POPULAR answer'):(m.sub>=0?(m.idx==m.sub?'Your honest answer':'Guess what '+E(m.names[m.sub])+' picked'):'Your secret answer');
 R(`<div class=c><div class=lb><span class=m>Round ${m.i+1} / ${m.n}${m.sx?' · Mature':''}${m.sd?' · ⚔️ SUDDEN DEATH':''}</span>${pr?'<span class=tag>🔮 PREDICT</span>':m.ty!='normal'?`<span class=tag>${INFO[m.ty][0]}</span>`:'<span></span>'}</div>${spb(m.ty)}<div class="card q">${E(m.t)}${m.hot?`<div class="m sm">🪑 Hot seat: ${E(m.hot)}</div>`:''}</div><p class=m>${lead}</p>${t0?`<div class=bar id=tb style="width:100%;transition:width ${t0}s linear"></div>`:''}${m.chs.map((c,i)=>`<button type=button class="b g ch" onclick="SBp(${i})">${E(c)}</button>`).join('')}${m.ty=='instant'&&!pr?'':'<button type=button class="b y" onclick=SBlk()>🔒 Lock in</button>'}</div>`);
-if(t0){setTimeout(()=>{const b=$('#tb');b&&(b.style.width='0')},50);clearTimeout(A.tm);A.tm=setTimeout(()=>{if(A.gid===gid&&A.rid==rid&&!A.done&&A.ph=='ans')sub(A.sel||'')},t0*1000)}}
+if(t0){setTimeout(()=>{const b=$('#tb');b&&(b.style.width='0')},50);clearTimeout(A.tm);A.tm=setTimeout(()=>{if(A.gid===gid&&A.rid==rid&&!A.done&&A.ph=='ans')sub(A.sel||'')},t0*1000);hurry(t0,()=>A.gid===gid&&A.rid==rid&&!A.done&&A.ph=='ans')}}
 window.SBp=i=>{if(A.done||!A.chs)return;if(A.ty=='instant'&&A.ph=='ans')return sub(A.chs[i]);A.sel=A.chs[i];document.querySelectorAll('.ch').forEach((b,j)=>b.classList.toggle('sel',j==i));snd(380,.05)};
 window.SBlk=()=>A.sel?sub(A.sel):T('Pick an answer first');
 function sub(v){if(A.done)return;if(A.ph=='pred'){A.pd=v;A.ph='ans';A.sel=null;return draw()}A.done=1;clearTimeout(A.tm);snd(520);const p={k:'ans',gid:A.gid,rid:A.rid,pid:me(),a:v,pd:A.pd||''};
