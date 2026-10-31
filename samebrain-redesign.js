@@ -66,13 +66,13 @@ const until=(f,ms,step=150)=>new Promise(r=>{const t0=Date.now();(function p(){l
 function SBE(code,msg,cause){const e=new Error(msg);e.code=code;e.cause=cause;return e}
 
 /* --- library loading: tries several CDNs, each with its own timeout --- */
-const SRC=['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
+const SRC=['supabase.min.js','https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js','https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
 let libP=null;
 const loadScript=(src,ms=8000)=>new Promise((res,rej)=>{const s=document.createElement('script'),t=setTimeout(()=>{s.remove();rej(new Error('timed out'))},ms);s.src=src;s.onload=()=>{clearTimeout(t);res()};s.onerror=()=>{clearTimeout(t);s.remove();rej(new Error('failed to load'))};document.head.appendChild(s)});
 function lib(){if(window.supabase&&window.supabase.createClient)return Promise.resolve();
 if(libP)return libP;
 return libP=(async()=>{for(const s of SRC){try{LOG('loading Supabase library',s);await loadScript(s);if(window.supabase&&window.supabase.createClient){LOG('Supabase library loaded');return}WARN('script loaded but window.supabase is missing',s)}catch(e){WARN('library load failed',s,e.message)}}
-libP=null;throw SBE('LIB','Could not load the Supabase library. Check your internet connection or disable any ad-blocker.')})()}
+libP=null;throw SBE('LIB','Could not load the Supabase library. Check your connection, then reload the page. If it keeps happening, make sure supabase.min.js is uploaded next to index.html.')})()}
 
 /* --- one shared client for the whole page --- */
 function client(){if(window._sb)return window._sb;if(!ok())throw SBE('CFG','Online play isn\'t configured yet');
@@ -99,7 +99,7 @@ const o={code,pid,host,ch,name,pl:[],cfg:{},view:0,in:0,live:0,synced:0,dead:0,m
 ch.on('presence',{event:'sync'},()=>{if(O!==o)return;o.synced=1;sync()})
 .on('presence',{event:'join'},({key,newPresences})=>LOG('presence join',key,newPresences))
 .on('presence',{event:'leave'},({key,leftPresences})=>LOG('presence leave',key,leftPresences))
-.on('broadcast',{event:'kick'},({payload})=>{LOG('broadcast kick',payload);if(O===o&&payload.pid==o.pid){leave2();home();T('The host removed you from the room')}})
+.on('broadcast',{event:'kick'},({payload})=>{LOG('broadcast kick',payload);if(O===o&&payload.pid==o.pid){leave2();home();ov(`<div class=c style="text-align:center"><h2>🚫 You've been kicked</h2><p class=m>The host removed you from the room.</p><button class="b y" onclick=cl()>OK</button></div>`)}})
 .on('broadcast',{event:'g'},({payload})=>{if(O===o&&window.SBG)SBG.on(payload)})
 .on('broadcast',{event:'cfg'},({payload})=>{if(O!==o)return;LOG('broadcast cfg',payload);o.cfg=payload;lob()});
 await new Promise((res,rej)=>{let d=0;const fin=(f,v)=>{if(d)return;d=1;clearTimeout(tm);f(v)};
@@ -156,7 +156,7 @@ if(others.length>=MAX)throw SBE('FULL','This room is full ('+MAX+' players)');
 o.in=1;await reg(o,{name:n,host:0,pid:o.pid});
 if(!hostOf(o))throw SBE('HOSTGONE','The host left while you were joining');
 LOG('joined room',code);lob(1)}catch(e){fail(e)}finally{busy=0}};
-window.kick=function(pid){O&&O.host&&O.ch.send({type:'broadcast',event:'kick',payload:{pid}})};
+window.kick=function(pid){if(!O||!O.host)return;const p=O.pl.find(x=>x.pid==pid);if(!confirm('Are you sure you want to kick '+(p?p.name:'this player')+'?'))return;LOG('kicking',pid);O.ch.send({type:'broadcast',event:'kick',payload:{pid}}).then(r=>{r!=='ok'&&WARN('kick broadcast result',r)},e=>WARN('kick broadcast failed',e))};
 window.cp=function(t){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>T('Copied!'),()=>T(t))};
 window.shr=function(){const u=inv();navigator.share?navigator.share({title:'Same Brain',text:'Join my Same Brain game: '+O.code,url:u}).catch(()=>{}):cp(u)};
 const inv=()=>location.origin+location.pathname+'?join='+O.code;
