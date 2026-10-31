@@ -550,4 +550,125 @@ function finish(){R(`<div class=c style="text-align:center"><h2>And the winner i
 const id=st.id=Date.now();st.on=0;setTimeout(()=>{clearInterval(iv);if(st.id!==id)return;const L=[...st.P].sort((a,b)=>b.pts-a.pts),rk=rank(L),w=L.filter(p=>p.pts==L[0].pts);
 R(`<div class=c style="justify-content:flex-start"><div class=big style="font-size:20px">${w.length>1?'IT\'S A TIE!':'WINNER'}</div><h1 style="font-size:54px;text-align:center;word-break:break-word">👑 ${w.map(p=>E(p.n)).join(' & ')}</h1><p class=m style="text-align:center">${L[0].pts} points</p>${L.map((p,i)=>`<div class="card grp" style="animation-delay:${i*.15}s"><div class=lb><span><b>${rk[i]}.</b> ${E(p.n)}</span><b>${p.pts} pts</b></div><div style="color:var(--y)" class=sm>${ti(p)}</div><div class="m sm">${S.mode=='know'?(p.kn||0)+' correct guesses · read '+(p.rd||0)+' times':p.maj+' majority matches'} · best streak 🔥${p.bs} · ${p.sync} Perfect Sync${st.pr?` · ${p.pc}/${st.pr} predictions`:''}</div></div>`).join('')}${awards().length?'<h3>Awards</h3>':''}${awards().map(x=>`<div class="card grp"><b>${x[0]} ${x[1]}</b><div class=sm>${E(x[2])} <span class=m>· ${x[3]}</span></div></div>`).join('')}<button class="b y" onclick="start(st.P.map(p=>p.n))">🔁 Play again (fresh questions)</button><button class="b g" onclick=setup()>Change setup</button><button class="b g" onclick=home()>Main menu</button></div>`);jingle([523,659,784,1047,1319]);burst()},2000)}
 home();$('#sd').textContent=S.sound?'🔊':'🔇';
-</script></body></html>
+</script>
+<script>
+/* Same Brain redesign layer, integrated into this standalone HTML file. */
+/* Same Brain – redesign layer. Load AFTER the main inline script:  <script src="samebrain-redesign.js"><\/script>
+   Online lobby needs a free Supabase project (Realtime enabled). Fill in CFG below. Pass & Play never uses it. */
+(()=>{
+const CFG={
+  url:'https://jonvocvgcwsufafvmfyh.supabase.co',
+  key:'YOUR_PUBLISHABLE_KEY'
+};
+const MAX=12,ok=()=>!!(CFG.url&&CFG.key);
+document.head.insertAdjacentHTML('beforeend',`<style>
+.c{max-width:560px}.hero{text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.hero .brand-icon{margin:0 auto;width:84px;height:84px}.hero h1{font-size:clamp(44px,13vw,64px)}
+.tag2{opacity:.75;font-weight:600}
+.big-b{display:flex;align-items:center;gap:14px;text-align:left;padding:18px 20px;border:0;border-radius:22px;width:100%;min-height:76px}
+.big-b .ic{font-size:32px}.big-b b{display:block;font-size:19px;font-weight:900;letter-spacing:.02em}.big-b span.d{display:block;font-size:14px;font-weight:600;opacity:.8}
+.big-b.host{background:linear-gradient(135deg,var(--y),#f97316);color:#1a1033;box-shadow:0 8px 28px #fbbf2433}
+.big-b.join{background:linear-gradient(135deg,var(--p),#6366f1);box-shadow:0 8px 28px #8b5cf644}
+.big-b.pp{background:#ffffff12;border:1px solid #ffffff22}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mc2{padding:14px 12px;border-radius:18px;border:2px solid #ffffff1c;background:#ffffff0d;text-align:left;transition:transform .15s,border-color .15s,background .15s;min-height:104px}
+.mc2 .ic{font-size:26px;display:block}.mc2 b{display:block;margin-top:4px;font-size:16px}.mc2 span.d{display:block;font-size:13px;opacity:.7;font-weight:600;line-height:1.3;margin-top:2px}
+.mc2.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 18%,transparent);transform:translateY(-2px)}
+.ft{display:flex;justify-content:space-between;align-items:center;font-size:13px;opacity:.55;padding-top:8px}
+.ft button{background:none;border:0;opacity:.9;font-size:14px;padding:10px 4px}
+.code{font-size:clamp(54px,18vw,84px);font-weight:900;letter-spacing:.14em;text-align:center;color:var(--y);text-shadow:0 0 30px #fbbf2455;padding-left:.14em}
+.cin{text-align:center;font-size:40px;font-weight:900;letter-spacing:.3em;text-transform:uppercase;padding-left:.3em}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.pc{display:flex;align-items:center;gap:10px;padding:10px;border-radius:16px;background:#ffffff0f;border:1px solid #ffffff1c;animation:pop .35s both;min-width:0}
+.pc .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pc .x{width:36px;height:36px;border:0;border-radius:10px;background:#ffffff14;flex:none}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#12081f;font-weight:900;flex:none}
+.qr{background:#fff;border-radius:14px;padding:8px;width:136px;height:136px;margin:0 auto}.qr svg{width:100%;height:100%;display:block}
+.er{color:#fca5a5;text-align:center;min-height:20px;font-size:15px}.warn{background:#fbbf2418;border:1px solid #fbbf2455;border-radius:16px;padding:12px;font-size:14px}
+.dots:after{content:'';animation:dt 1.4s steps(4) infinite}@keyframes dt{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+</style>`);
+const IC=($('.brand-icon')||{}).src||'',AV=['#8b5cf6','#38bdf8','#fbbf24','#f97316','#22c55e','#f43f5e'];
+const av=n=>`<span class=av style="background:${AV[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%6]}">${E([...n][0]||'?').toUpperCase()}</span>`;
+const MD={classic:['🎯','Classic','Divisive multiple choice. Match the majority to score.','#8b5cf6'],likely:['👀','Most Likely','Vote for who is most likely to… Match the majority.','#38bdf8'],split:['⚖️','Split','Write a prompt, split the room evenly to win big.','#fbbf24'],know:['🧑‍🤝‍🧑','Know Me','Guess what your friend secretly picked.','#f97316']};
+const cards=(js,sel)=>Object.keys(MD).map(k=>`<button class="mc2 ${sel==k?'on':''}" style="--ac:${MD[k][3]}" onclick="${js(k)}"><i class=ic style="font-style:normal">${MD[k][0]}</i><b>${MD[k][1]}</b><span class=d>${MD[k][2]}</span></button>`).join('');
+const uid=()=>Math.random().toString(36).slice(2,8);
+const csec=()=>ok()?'':'<div class=warn>⚙️ Online play isn\'t configured yet. Add your Supabase URL and key at the top of <b>samebrain-redesign.js</b>. Pass &amp; Play works without it.</div>';
+
+/* ---------- home ---------- */
+window.home=function(){cl();st.on=0;st.id=0;st.rid=0;clearTimeout(st.tm);leave2();atHome=1;
+R(`<div class=c style="justify-content:flex-start"><div class=hero>${IC?`<img class=brand-icon src="${IC}" alt="">`:''}<h1>SAME<br>BRAIN</h1><p class=tag2>Think like your friends. Or don't.</p></div>
+<button class="big-b host b" onclick=hostSetup()><i class=ic style="font-style:normal">🎉</i><span><b>HOST A GAME</b><span class=d>Create a room and invite your friends</span></span></button>
+<button class="big-b join b" onclick="joinScr()"><i class=ic style="font-style:normal">🔑</i><span><b>JOIN A GAME</b><span class=d>Enter a room code to join in</span></span></button>
+<button class="big-b pp b" onclick=setup()><i class=ic style="font-style:normal">📱</i><span><b>PASS &amp; PLAY</b><span class=d>One phone, passed around the group</span></span></button>
+<h3>Game modes</h3><div class=mg>${Object.keys(MD).map(k=>`<div class=mc2 style="--ac:${MD[k][3]};min-height:0"><i class=ic style="font-style:normal">${MD[k][0]}</i><b>${MD[k][1]}</b><span class=d>${MD[k][2]}</span></div>`).join('')}</div>
+<div class=ft><span>Same Brain · 18+ Spicy option</span><span><button onclick=sets()>⚙️ Settings</button><button onclick="rules()">How to play</button></span></div></div>`)};
+window.sets=function(){ov(`<div class=c style="text-align:center"><h2>⚙️ Settings</h2><button class="b g" onclick="tog();sets()">Sound: ${S.sound?'On 🔊':'Off 🔇'}</button><button class="b g" onclick="cl();rules()">How to play</button><button class="b g" onclick="if(confirm('Clear saved names and settings?')){localStorage.removeItem('samebrain');location.reload()}">Clear saved data</button><button class="b y" onclick=cl()>Done</button></div>`)};
+
+/* ---------- pass & play setup: mode cards ---------- */
+const _s=window.setup;window.setup=function(){_s();const h=[...document.querySelectorAll('h3')].find(x=>x.textContent=='Mode');if(h&&h.nextElementSibling)h.nextElementSibling.outerHTML=`<div class=mg>${cards(k=>`S.mode='${k}';sv();setup()`,S.mode)}</div>`};
+
+/* ---------- host setup ---------- */
+window.hostSetup=function(){const sp=(l,on,js)=>`<button class="${on?'on':''}" onclick="${js};sv();hostSetup()">${l}</button>`;
+R(`<div class=c style="justify-content:flex-start"><h2>Host a game</h2>${csec()}<h3>Your name</h3><input id=in maxlength=14 placeholder="Display name" value="${E(S.hn||'')}" oninput="S.hn=this.value;sv()"><h3>Mode</h3><div class=mg>${cards(k=>`S.mode='${k}';sv();hostSetup()`,S.mode)}</div><h3>Rounds</h3><div class=seg>${[5,10,15].map(n=>sp(n,S.rounds==n,`S.rounds=${n}`)).join('')}</div><h3>Special rounds</h3><div class=seg>${sp('On',S.sp,'S.sp=1')}${sp('Off',!S.sp,'S.sp=0')}</div><h3>Spicy 🔞 (18+)</h3><div class=seg>${sp('Off',!S.sx,'S.sx=0')}<button class="${S.sx?'on':''}" onclick="${S.sx?'':`ov('<div class=c style=text-align:center><h2>Spicy mode</h2><p class=m>Everyone playing must be 18+.</p><button class=&quot;b y&quot; onclick=&quot;S.sx=1;sv();cl();hostSetup()&quot;>I\\'m 18+, turn it on</button><button class=&quot;b g&quot; onclick=cl()>Cancel</button></div>')`}">On</button></div><p class="er" id=er></p><button class="b y" onclick=mkRoom()>Create game</button><button class="b g" onclick=home()>Back</button></div>`)};
+
+/* ---------- realtime ---------- */
+let O=null;
+const lib=()=>window.supabase?Promise.resolve():new Promise((r,j)=>{const s=document.createElement('script');s.src='https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';s.onload=r;s.onerror=j;document.head.appendChild(s)});
+function leave2(){if(!O)return;const o=O;O=null;try{o.ch.untrack();window._sb.removeChannel(o.ch)}catch(e){}}
+const er=m=>{const e=$('#er');e?e.textContent=m:T(m)};
+async function conn(code,name,host){await lib();const c=window._sb=window._sb||window.supabase.createClient(CFG.url,CFG.key);
+const pid=(host?'h':'p')+uid(),ch=c.channel('sb-'+code,{config:{presence:{key:pid}}});O={code,pid,host,ch,name,pl:[],cfg:{},view:0};
+return new Promise(res=>{let d=0;const fin=v=>{d||(d=1,res(v))};
+ch.on('presence',{event:'sync'},()=>{sync();fin(1)})
+.on('broadcast',{event:'kick'},({payload})=>{if(O&&payload.pid==O.pid){leave2();home();T('The host removed you from the room')}})
+.on('broadcast',{event:'cfg'},({payload})=>{if(O){O.cfg=payload;lob()}});
+ch.subscribe(s=>{if(s=='SUBSCRIBED')setTimeout(()=>fin(1),2500);else if(s=='CHANNEL_ERROR'||s=='TIMED_OUT')fin(0)})})}
+function sync(){if(!O)return;O.pl=Object.values(O.ch.presenceState()).map(a=>a[a.length-1]).filter(p=>p&&p.name);
+if(O.host)O.ch.send({type:'broadcast',event:'cfg',payload:{mode:S.mode,rounds:S.rounds,sx:S.sx,sp:S.sp}});
+else if(O.in&&!O.pl.some(p=>p.host)){leave2();home();return T('The host closed the room')}lob()}
+window.mkRoom=async function(){const n=(S.hn||'').trim();if(!n)return er('Enter your name first');if(!ok())return er('Online play needs Supabase set up (see the note above)');
+er('Creating room…');const A='ABCDEFGHJKLMNPQRSTUVWXYZ';
+try{for(let t=0;t<5;t++){const code=[0,0,0,0].map(()=>A[Math.floor(Math.random()*A.length)]).join('');
+if(!await conn(code,n,true)){leave2();return er('Could not reach the server')}
+if(O.pl.some(p=>p.host)){leave2();continue}
+O.in=1;await O.ch.track({name:n,host:1,pid:O.pid});return lob(1)}er('Could not find a free room code, try again')}catch(e){leave2();er('Connection failed. Check your Supabase settings')}};
+window.joinScr=function(code){R(`<div class=c style="justify-content:flex-start"><h2>Join a game</h2>${csec()}<h3>Room code</h3><input id=jc class=cin maxlength=4 autocomplete=off autocapitalize=characters placeholder="ABCD" value="${E(code||'')}"><h3>Your name</h3><input id=jn maxlength=14 placeholder="Display name" value="${E(S.jn||'')}"><p class=er id=er></p><button class="b y" onclick=joinGo()>Join game</button><button class="b g" onclick=home()>Back</button></div>`);const e=$(code?'#jn':'#jc');e&&e.focus()};
+window.joinGo=async function(){const code=$('#jc').value.trim().toUpperCase(),n=$('#jn').value.trim();S.jn=n;sv();
+if(code.length!=4)return er('Room codes are 4 letters');if(!n)return er('Enter your name');if(!ok())return er('Online play isn\'t configured yet');
+er('Looking for room…');try{if(!await conn(code,n,false)){leave2();return er('Could not reach the server')}
+let foundHost=false;
+for(let i=0;i<30;i++){
+  if(O.pl.some(p=>p.host)){
+    foundHost=true;
+    break;
+  }
+  await new Promise(resolve=>setTimeout(resolve,200));
+}
+if(!foundHost){
+  leave2();
+  return er('Room not found, or it has expired');
+}
+if(O.pl.some(p=>p.name.toLowerCase()==n.toLowerCase())){leave2();return er('That name is already taken in this room')}
+if(O.pl.length>=MAX){leave2();return er('This room is full')}
+O.in=1;await O.ch.track({name:n,host:0,pid:O.pid});lob(1)}catch(e){leave2();er('Connection failed')}};
+window.kick=function(pid){O&&O.host&&O.ch.send({type:'broadcast',event:'kick',payload:{pid}})};
+window.cp=function(t){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>T('Copied!'),()=>T(t))};
+window.shr=function(){const u=inv();navigator.share?navigator.share({title:'Same Brain',text:'Join my Same Brain game: '+O.code,url:u}).catch(()=>{}):cp(u)};
+const inv=()=>location.origin+location.pathname+'?join='+O.code;
+function lob(first){if(!O||!O.in)return;if(!first&&!$('#lb'))return;O.view=1;const c=O.cfg.mode?O.cfg:{mode:S.mode,rounds:S.rounds,sx:S.sx},P=O.pl.slice().sort((a,b)=>b.host-a.host),M=MD[c.mode]||MD.classic;
+R(`<div class=c id=lb style="justify-content:flex-start"><div class=lb><span class=m>Room code</span><span class="tag">${O.host?'👑 You are the host':'You\'re in'}</span></div><div class=code>${O.code}</div>
+<div class=row><button class="b g" style="flex:1;padding:14px" onclick="cp('${O.code}')">Copy code</button><button class="b g" style="flex:1;padding:14px" onclick=shr()>Share link</button></div><div class=qr id=qr style="display:none"></div>
+<div class=card style="padding:12px"><b>${M[0]} ${M[1]}</b> · ${c.rounds} rounds${c.sx?' · 🔞 Spicy':''}</div>
+<div class=lb><h3>Players</h3><span class=m>${P.length} / ${MAX}</span></div><div class=pg>${P.map(p=>`<div class=pc>${av(p.name)}<span class=n>${E(p.name)}${p.host?' 👑':''}</span>${O.host&&!p.host?`<button class=x onclick="kick('${p.pid}')" aria-label="Remove">✕</button>`:''}</div>`).join('')}</div>
+<p class="m" style="text-align:center">Waiting for your friends<span class=dots></span></p>
+<p class="m sm" style="text-align:center">The lobby is live. Synchronised online rounds are not built yet, so use Pass &amp; Play to play on one device.</p>
+<button class="b g" onclick=home()>Leave room</button></div>`);
+if(O.qr){const e=$('#qr');e.innerHTML=O.qr;e.style.display='block'}else if(first)lib2()}
+function lib2(){const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';s.onload=()=>{try{const q=qrcode(0,'M');q.addData(inv());q.make();const e=$('#qr');O.qr=q.createSvgTag(4,0);e.innerHTML=O.qr;e.style.display='block'}catch(e){}};document.head.appendChild(s)}
+window.addEventListener('pagehide',leave2);
+home();const j=new URLSearchParams(location.search).get('join');if(j)joinScr(j.toUpperCase().slice(0,4));
+})();
+
+</script>
+<script src="samebrain-redesign.js"></script>
+<script src="samebrain-online.js"></script>
+</body></html>
